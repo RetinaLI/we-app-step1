@@ -1,0 +1,445 @@
+<style lang="less">
+.container{
+  width:100%;
+  height:100%;
+  background: pink;
+  .chart-line {
+    width: 100%;
+    height: 300px;
+  }
+  .chart-line2{
+    width: 100%;
+    height: 300px;
+  }
+}
+
+</style>
+<template>
+  <view class="container">
+    <ec-canvas class='chart-line' :ec.sync='ec'></ec-canvas>
+    <image style="width: 100px; height: 100px; background-color: #eeeeee;" mode="{{mode}}" src="{{src}}"></image>
+    <canvas2 class='chart-line' :ec.sync='ec1'></canvas2>
+    <canvasMap class='chart-line' :ec.sync='ec2'></canvasMap>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  import ecCanvas from '../plugins/ec-canvas/ec-canvas'
+  import * as echarts from '../plugins/ec-canvas/echarts'
+
+  export default class Echart extends wepy.page {
+    config = {
+      navigationBarTitleText: 'test'
+    }
+    components = {
+      'ec-canvas': ecCanvas,
+      'canvas2': ecCanvas,
+      'canvasMap': ecCanvas
+    }
+
+    data = {
+      ec: {
+        onInit: this.initChart
+      },
+      ec1: {
+        onInit: this.initChart1
+      },
+      ec2: {
+        onInit: this.initChart2
+      },
+      mode: 'scaleToFill',
+      src: '../assets/demo.png'
+    }
+
+    computed = {
+    }
+
+    methods = {
+    }
+
+    events = {
+    }
+
+    onLoad() {
+    }
+    initChart1(canvas, width, height) {
+      console.info('11111')
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      })
+      canvas.setChart(chart)
+
+      var option = {
+        backgroundColor: '#fff',
+        title: {
+          text: '最近15日接口使用情况',
+          textStyle: {
+            color: '#666',
+            fontWeight: 'bold',
+            fontSize: 14
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false,
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        legend: {
+          data: ['销量']
+        },
+        grid: {
+          left: '3%',
+          right: '2%',
+          bottom: '8%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          splitLine: {show: true},
+          boundaryGap: true,
+          data: ['08-01', '08-02', '08-03', '08-04', '08-05', '08-06', '08-07', '08-08', '08-09', '08-10', '08-11', '08-12', '08-13', '08-14', '08-15'],
+          axisLine: {
+            lineStyle: {
+              type: 'solid',
+              color: '#aaa', // 左边线的颜色
+              width: '1' // 坐标线的宽度
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#aaa' // 坐标值得具体的颜色
+            }
+          },
+          axisTick: {
+            show: false
+          }
+        },
+        yAxis: {
+          type: 'value',
+          splitLine: {show: true}, // 去除网格线
+          splitArea: {show: false},
+          axisLine: {
+            lineStyle: {
+              type: 'solid',
+              color: '#aaa', // 左边线的颜色
+              width: '1' // 坐标线的宽度
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#aaa' // 坐标值得具体的颜色
+            }
+          },
+          axisTick: {
+            show: false // 刻度值
+          }
+        },
+        series: [{
+          data: [123, 323, 345, 434, 413, 456, 634, 820, 932, 901, 934, 1290, 1330, 1620, 1846],
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 6,
+          emphasis: {
+            label: {
+              color: '#fff',
+              show: true,
+              backgroundColor: '#4F91FF',
+              borderRadius: 12,
+              padding: [5, 10]
+            }
+          },
+          itemStyle: {
+            label: {
+              show: false
+            },
+            normal: {
+              color: '#4F91FF', // 折点颜色
+              borderColor: '#4F91FF',
+              borderWidth: 2,
+              lineStyle: {
+                width: 3, // 0.1的线条是非常细的了
+                color: '#4F91FF' // 折线颜色
+              }
+            }
+          },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: 'rgba(68,117,253,0.5)' // 0% 处的颜色
+              }, {
+                offset: 1, color: 'rgba(68,117,253,0.1)' // 100% 处的颜色
+              }],
+              globalCoord: false // 缺省为 false
+            }
+          }
+        }]
+      };
+
+      chart.setOption(option)
+      return chart
+    }
+    initChart(canvas, width, height) {
+      console.info(22222)
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      })
+      canvas.setChart(chart)
+
+      var option = {
+        backgroundColor: '#fff',
+        title: {
+          text: '最近15日接口使用情况',
+          textStyle: {
+            color: '#666',
+            fontWeight: 'bold',
+            fontSize: 14
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false,
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        legend: {
+          data: ['销量']
+        },
+        grid: {
+          left: '3%',
+          right: '8%',
+          bottom: '8%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          splitLine: {show: true},
+          boundaryGap: true,
+          data: ['08-01', '08-02', '08-03', '08-04', '08-05', '08-06', '08-07'],
+          axisLine: {
+            lineStyle: {
+              type: 'solid',
+              color: '#aaa', // 左边线的颜色
+              width: '1' // 坐标线的宽度
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#aaa' // 坐标值得具体的颜色
+            }
+          },
+          axisTick: {
+            show: false
+          }
+        },
+        yAxis: {
+          type: 'value',
+          splitLine: {show: true}, // 去除网格线
+          splitArea: {show: false},
+          axisLine: {
+            lineStyle: {
+              type: 'solid',
+              color: '#aaa', // 左边线的颜色
+              width: '1' // 坐标线的宽度
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#aaa' // 坐标值得具体的颜色
+            }
+          },
+          axisTick: {
+            show: false // 刻度值
+          }
+        },
+        series: [{
+          name: '邮件营销',
+          type: 'line',
+          stack: '总量',
+          symbol: 'none',
+          smooth: true,
+          markPoint: {
+            symbol: 'circle',
+            symbolSize: 12,
+            label: {
+              normal: {
+                show: true,
+                position: 'top',
+                color: '#fff',
+                fontSize: 12,
+                borderWidth: 10,
+                borderRadius: 4,
+                padding: [1, 6, 1, 6],
+                borderColor: '#4F91FF',
+                backgroundColor: '#4F91FF'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#4F91FF',
+                fontSize: 5,
+                borderColor: '#fff',
+                borderWidth: 3,
+                label: {
+                  show: false
+                }
+              }
+            },
+            effect: {
+              show: true,
+              shadowBlur: 0
+            },
+            data: [{
+              type: 'average',
+              name: '平均值'
+            }]
+          },
+          label: {
+            normal: {
+              show: true,
+              position: 'top',
+              formatter: '{c}%'
+            }
+          },
+          itemStyle: {
+            label: {
+              show: true
+            },
+            normal: {
+              lineStyle: {
+                width: 3, // 0.1的线条是非常细的了
+                color: '#4F91FF' // 折线颜色
+              }
+            }
+          },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: 'rgba(68,117,253,0.5)' // 0% 处的颜色
+              }, {
+                offset: 1, color: 'rgba(68,117,253,0.1)' // 100% 处的颜色
+              }],
+              globalCoord: false // 缺省为 false
+            }
+          },
+          data: [120, 132, 101, 134, 90, 230, 210]
+        }]
+      };
+
+      chart.setOption(option)
+      return chart
+    }
+
+    initChart2(canvas, width, height) {
+      console.info(333333)
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      })
+      canvas.setChart(chart)
+
+      var option = {
+        backgroundColor: 'transparent',
+        title: {
+          show: false,
+          text: '',
+          left: 'left',
+          textStyle: {
+            color: '#fff'
+          }
+        },
+        tooltip: {
+          show: false,
+          trigger: 'item',
+          formatter: '{b}'
+        },
+        visualMap: {
+          show: true,
+          seriesIndex: 0,
+          min: 0,
+          max: 2500,
+          left: 'center',
+          inverse: false,
+          top: 'bottom',
+          text: ['高', '低'],           // 文本，默认为数值文本
+          calculable: false,
+          orient: 'horizontal',
+          inRange: {
+            color: ['#7e9eff', '#52f0ff']
+          }
+        },
+        xAxis: {
+          type: 'category',
+          data: [],
+          splitNumber: 1,
+          show: false
+        },
+        yAxis: {
+          position: 'right',
+          min: 0,
+          max: 20,
+          splitNumber: 20,
+          inverse: true,
+          axisLabel: {
+            show: true
+          },
+          axisLine: {
+            show: false
+          },
+          splitLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          data: []
+        },
+        series: [
+          {
+            zlevel: 1,
+            name: '中国',
+            type: 'map',
+            mapType: 'china',
+            roam: false,
+            label: {
+              normal: {
+                show: false
+              },
+              emphasis: {
+                show: false
+              }
+            },
+            itemStyle: {
+              emphasis: {
+                show: false
+              }
+            },
+            data: [
+              { name: '南海诸岛', value: 0, itemStyle: { normal: { opacity: 0 }, emphasis: { show: false } } }
+            ]
+          }
+        ]
+      }
+
+      chart.setOption(option)
+      return chart
+    }
+  }
+</script>

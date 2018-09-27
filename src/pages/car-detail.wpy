@@ -1,0 +1,76 @@
+<style lang="less">
+@import "../style/global.less";
+
+.weui-tab {
+  .weui-navbar__item {
+    color: @c999;
+    &.weui-bar__item_on {
+      color: @normal;
+    }
+    .weui-navbar__title {
+      font-size: 14rpx;
+    }
+  }
+  .weui-navbar__slider {
+    width: 33.33%;
+    height: 1px;
+    background-color: @normal;
+  }
+}
+</style>
+<template>
+  <view class="navbar page">
+    <view class="page__bd">
+      <view class="weui-tab">
+        <view class="weui-navbar">
+          <view wx:for="{{tabs}}" wx:key="*this" id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" @tap="tabClick">
+            <view class="weui-navbar__title">{{item}}</view>
+          </view>
+          <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+        </view>
+        <view class="weui-tab__panel">
+          <view class="weui-tab__content" hidden="{{activeIndex != 0}}">aaa</view>
+          <view class="weui-tab__content" hidden="{{activeIndex != 1}}">bbb</view>
+          <view class="weui-tab__content" hidden="{{activeIndex != 2}}">ccc</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+
+@connect({
+  profile (state) {
+    return state.profile.user;
+  }
+})
+
+export default class Index extends wepy.page {
+
+  config = {
+    navigationBarTitleText: '车辆详情-实时'
+  }
+  data = {
+    tabs: ['实时', '行程', '画像'],
+    activeIndex: 0,
+    sliderOffset: 0,
+    sliderLeft: 0
+  }
+  methods = {
+    tabClick (e) {
+      this.sliderOffset = e.currentTarget.offsetLeft;
+      this.activeIndex = e.currentTarget.id;
+    }
+  }
+  async onLoad () {
+    /* let res = await wepy.getSystemInfo();
+
+    this.sliderLeft = (res.windowWidth / this.tabs.length - sliderWidth) / 2;
+    this.sliderOffset = res.windowWidth / this.tabs.length * this.activeIndex; */
+    console.log('real-time is loaded');
+  }
+}
+</script>

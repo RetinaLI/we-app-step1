@@ -1,0 +1,80 @@
+<style lang="less">
+</style>
+<template>
+  <view class="container" hidden="{{!hasLogin}}">
+    <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGetUserInfo">微信登录</button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import { profile } from '../stores/actions';
+
+  let asyncProfileInfo = profile.asyncProfileInfo;
+
+  @connect({
+    profile (state) {
+      return state.profile.user;
+    }
+  }, {
+    asyncProfileInfo
+  })
+  export default class Welcome extends wepy.page {
+
+    config = {
+      navigationBarTitleText: '首页'
+    };
+    components = {
+    };
+
+    mixins = [];
+
+    data = {
+      hasLogin: false
+    };
+
+    methods = {
+      onGetUserInfo(e) {
+        console.info(e.detail);
+        if (e.detail.errMsg === 'getUserInfo:fail auth deny') {
+        }
+
+        if (e.detail.userInfo) {
+
+        }
+      }
+    };
+
+    events = {
+    };
+
+    onLoad () {
+      console.info('onLoad');
+    }
+
+    onHide() {
+      console.info('onHide');
+    }
+
+    async onShow() {
+      wepy.showLoading({
+        title: '加载中'
+      });
+      await this.methods.asyncProfileInfo();
+
+      if (this.profile) {
+        wepy.hideLoading();
+        this.hasLogin = true;
+
+        wepy.switchTab({
+          url: 'index'
+        });
+      }
+    }
+
+    onUnLoad() {
+      console.info('onUnLoad');
+    }
+  }
+</script>

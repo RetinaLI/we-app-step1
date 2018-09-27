@@ -1,0 +1,68 @@
+<style lang="less">
+</style>
+<template>
+  <view class="container">
+    <text>欢迎，{{ profile.name }}</text>
+    <view class="weui-cells weui-cells_after-title">
+      <navigator url="car-detail" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">车辆详情</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">cell standard</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+
+@connect({
+  profile (state) {
+    return state.profile.user;
+  }
+})
+
+export default class Index extends wepy.page {
+
+  config = {
+    navigationBarTitleText: '首页'
+  };
+  components = {
+  };
+
+  mixins = [];
+
+  data = {
+  };
+
+  methods = {
+    tapNav (path) {
+      console.log(path);
+      wx.redirectTo(`pages/car-detail/${path}`);
+    }
+  };
+
+  events = {
+  };
+
+  onLoad () {
+    console.info('onLoad');
+  }
+
+  onHide () {
+    console.info('onHide');
+  }
+
+  onShow () {
+    console.info('onShow');
+  }
+
+  onUnLoad () {
+    console.info('onUnLoad');
+  }
+}
+</script>
