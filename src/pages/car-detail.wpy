@@ -1,14 +1,21 @@
 <style lang="less">
 @import "../style/global.less";
 
+.weui-navbar {
+  background-color: #fff;
+}
 .weui-tab {
+   .weui-navbar {
+     border-bottom: none;
+     background: #fff;
+   }
   .weui-navbar__item {
     color: @c999;
     &.weui-bar__item_on {
       color: @normal;
     }
     .weui-navbar__title {
-      font-size: 14rpx;
+      font-size: 28rpx;
     }
   }
   .weui-navbar__slider {
@@ -16,6 +23,10 @@
     height: 1px;
     background-color: @normal;
   }
+}
+.weui-tab__panel {
+  padding: 100rpx 16rpx;
+  background-color: #f8f8f8;
 }
 </style>
 <template>
@@ -29,9 +40,15 @@
           <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
         </view>
         <view class="weui-tab__panel">
-          <view class="weui-tab__content" hidden="{{activeIndex != 0}}">aaa</view>
-          <view class="weui-tab__content" hidden="{{activeIndex != 1}}">bbb</view>
-          <view class="weui-tab__content" hidden="{{activeIndex != 2}}">ccc</view>
+          <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+            <realTime></realTime>
+          </view>
+          <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+            <tripIndex></tripIndex>
+          </view>
+          <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
+            <portrait></portrait>
+          </view>
         </view>
       </view>
     </view>
@@ -40,37 +57,55 @@
 
 <script>
 import wepy from 'wepy';
-import { connect } from 'wepy-redux';
-
-@connect({
-  profile (state) {
-    return state.profile.user;
-  }
-})
-
+import RealTime from '../components/real-time';
+import Portrait from '../components/portrait';
+import TripIndex from './trip/trip-index';
 export default class Index extends wepy.page {
-
   config = {
-    navigationBarTitleText: '车辆详情-实时'
+    navigationBarTitleText: '车辆详情'
+  }
+  components = {
+    realTime: RealTime,
+    tripIndex: TripIndex,
+    portrait: Portrait
   }
   data = {
+    vin: '',
     tabs: ['实时', '行程', '画像'],
     activeIndex: 0,
-    sliderOffset: 0,
-    sliderLeft: 0
+    sliderOffset: 0
   }
   methods = {
     tabClick (e) {
       this.sliderOffset = e.currentTarget.offsetLeft;
       this.activeIndex = e.currentTarget.id;
+      this.$apply();
+      this.renderTabByIndex();
     }
   }
-  async onLoad () {
-    /* let res = await wepy.getSystemInfo();
 
-    this.sliderLeft = (res.windowWidth / this.tabs.length - sliderWidth) / 2;
-    this.sliderOffset = res.windowWidth / this.tabs.length * this.activeIndex; */
-    console.log('real-time is loaded');
+  renderTabByIndex() {
+    if (this.activeIndex === '1') {
+      this.$broadcast('getTripIndex', this.vin);
+    } else if (this.activeIndex === '2') {
+      this.$broadcast('portraitRender', this.vin);
+    } else {
+      this.$broadcast('realTimeRender', this.vin);
+    }
+  }
+
+  onLoad(params) {
+
+    this.vin = params.vin;
+    this.$apply();
+    this.renderTabByIndex();
+  }
+
+  onUnload() {
+    this.activeIndex = '0';
+    this.sliderOffset = '0';
+    this.$apply();
+    this.$broadcast('destroy-echarts');
   }
 }
 </script>

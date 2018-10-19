@@ -1,0 +1,141 @@
+<style lang="less">
+  .weui-cell{
+    &:before{
+      right: 46rpx;
+    }
+  }
+  view.item {
+    position: relative;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    padding-right: 46rpx;
+    padding-left: 46rpx;
+    view.content {
+      display: flex;
+      flex-direction: rows;
+      align-items: center;
+    }
+    image {
+      width: 240rpx;
+      height: 106rpx;
+      margin-right: 28rpx;
+    }
+
+    view.info {
+      flex: 1;
+      text:first-child {
+        color: #222;
+        font-weight: bolder;
+        font-size: 28rpx;
+        display: block;
+      }
+      text:last-child {
+        color: #999;
+        font-size: 24rpx;
+        display: block;
+      }
+    }
+  }
+</style>
+<template>
+  <view class="container clearfix">
+    <view class="list-wrapper weui-cells weui-cells_show">
+      <view wx:for="{{list}}" wx:for-index="index" wx:for-item="item" wx:key="index" @tap="showDetail({{index}})" class="item weui-cell weui-cell_access">
+        <view class="weui-cell__bd content">
+          <image src="../../assets/icons/report.jpg"></image>
+          <view class="info">
+            <text>{{ item.name }}</text>
+            <text>{{ item.time }}</text>
+          </view>
+        </view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import reportService from '../../services/report';
+  import toast from '../../lib/toast';
+
+  export default class MessageList extends wepy.page {
+    config = {
+      navigationBarTitleText: '报告',
+      enablePullDownRefresh: true,
+      onReachBottomDistance: 50
+    };
+    components = {
+    };
+
+    mixins = [];
+
+    data = {
+      list: []
+    };
+    pageIndex = 0;
+    pageSize = 10;
+    loadingData = false;
+
+    methods = {
+      showDetail(index) {
+        wepy.navigateTo({
+          url: 'detail?url=' + encodeURIComponent(this.list[index].url)
+        });
+      }
+    };
+
+    events = {
+    };
+
+    onLoad () {
+    }
+
+    onHide() {
+    }
+
+    async bindData() {
+      if (this.loadingData) return;
+      this.loadingData = true;
+      let result = await reportService.getList({ pageIndex: this.pageIndex, pageSize: this.pageSize });
+      if(this.pageIndex === 0) this.list = result.list;
+      else {
+        let list = [...this.list, ...result.list];
+        this.list = list;
+      }
+      this.$apply();
+      this.loadingData = false;
+    }
+
+    onShow() {
+      this.pageIndex = 0;
+      this.bindData();
+    }
+
+    async onPullDownRefresh() {
+      if (this.loadingData) return;
+      wepy.showLoading({
+        title: '刷新数据'
+      });
+      this.pageIndex = 0;
+      await this.bindData();
+      wepy.hideLoading();
+      wepy.stopPullDownRefresh();
+      toast.success('刷新成功');
+    }
+
+    async onReachBottom() {
+      if (this.loadingData) return;
+      wepy.showLoading({
+        title: '加载数据'
+      });
+      this.pageIndex ++;
+      await this.bindData();
+      wepy.hideLoading();
+      toast.success('加载成功');
+    }
+
+    onUnLoad() {
+    }
+  }
+</script>

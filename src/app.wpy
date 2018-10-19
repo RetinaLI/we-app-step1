@@ -1,9 +1,11 @@
 <style lang="less">
 @import './style/weui.less';
+@import './style/global.less';
 page{
   background-color: #F8F8F8;
   font-size: 16px;
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
+  min-height: 100%;
 }
 .page__hd {
   padding: 45px;
@@ -52,48 +54,70 @@ export default class extends wepy.app {
     'pages': [
       'pages/welcome',
       'pages/index',
-      'pages/echarts',
+      'pages/vehicle-internet',
+      'pages/mine',
+
+      // 我的
+      'pages/profile/platform',
+      'pages/profile/user-information',
+      'pages/profile/subscribe',
+      'pages/profile/suggest',
+      'pages/profile/v-info',
+
+      // 报告
+      'pages/message/list',
+      'pages/message/detail',
 
       // 车辆详情
       'pages/car-detail',
+      // 位置
+      'pages/location',
 
-      // weui 示例代码，生产环境会删除
-      'example/index',
-      'example/button',
-      'example/list',
-      'example/input',
-      'example/slider',
-      'example/uploader',
+      // 月行程
+      'pages/trip/trip-month',
+      // 日行程
+      'pages/trip/trip-day',
+      // 日分段行程
+      'pages/trip/trip-day-time',
 
-      'example/article',
-      'example/badge',
-      'example/flex',
-      'example/footer',
-      'example/gallery',
-      'example/grid',
-      'example/icons',
-      'example/loadmore',
-      'example/panel',
-      'example/preview',
-      'example/progress',
+      // // weui 示例代码，生产环境会删除
+      // 'example/echarts',
+      // 'example/index',
+      // 'example/button',
+      // 'example/list',
+      // 'example/input',
+      // 'example/slider',
+      // 'example/uploader',
 
-      'example/actionsheet',
-      'example/dialog',
-      'example/msg',
-      'example/msg_fail',
-      'example/msg_success',
-      'example/picker',
-      'example/toast',
+      // 'example/article',
+      // 'example/badge',
+      // 'example/flex',
+      // 'example/footer',
+      // 'example/gallery',
+      // 'example/grid',
+      // 'example/icons',
+      // 'example/loadmore',
+      // 'example/panel',
+      // 'example/preview',
+      // 'example/progress',
 
-      'example/navbar',
-      'example/tabbar',
+      // 'example/actionsheet',
+      // 'example/dialog',
+      // 'example/msg',
+      // 'example/msg_fail',
+      // 'example/msg_success',
+      // 'example/picker',
+      // 'example/toast',
 
-      'example/searchbar'
+      // 'example/navbar',
+      // 'example/tabbar',
+
+      // 'example/searchbar'
     ],
     'window': {
       'navigationBarTextStyle': 'black',
       'navigationBarTitleText': 'WeUI in WePY',
-      'navigationBarBackgroundColor': '#f8f8f8',
+      'navigationBarBackgroundColor': '#fff',
       'backgroundColor': '#f8f8f8'
     },
     'networkTimeout': {
@@ -104,16 +128,27 @@ export default class extends wepy.app {
     },
     'tabBar': {
       'color': '#686868',
-      'selectedColor': '#a29',
+      'selectedColor': '#4475FD',
       list: [{
         pagePath: 'pages/index',
+        iconPath: 'assets/shouye.png',
+        selectedIconPath: 'assets/shouye-choose.png',
         text: '首页'
       }, {
-        pagePath: 'pages/echarts',
-        text: 'echarts'
+        pagePath: 'pages/vehicle-internet',
+        iconPath: 'assets/chelianwang.png',
+        selectedIconPath: 'assets/chelianwang-choose.png',
+        text: '车联网'
       }, {
-        pagePath: 'example/index',
-        text: '例子'
+        pagePath: 'pages/message/list',
+        iconPath: 'assets/icons/report@2x.png',
+        selectedIconPath: 'assets/icons/report-choose@2x.png',
+        text: '报告'
+      }, {
+        pagePath: 'pages/mine',
+        iconPath: 'assets/mine.png',
+        selectedIconPath: 'assets/mine-choose.png',
+        text: '我的'
       }]
     }
   };

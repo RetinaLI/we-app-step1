@@ -1,11 +1,15 @@
-import wepy from 'wepy';
-import AjaxProvider from '../providers/ajax'
+// import wepy from 'wepy';
+import ajaxProvider from '../providers/ajax';
 
 class PassportService {
-  ajaxProvider = new AjaxProvider();
 
   checkLogin() {
-    
+
+  }
+
+  async registUserByWeiXinUserInfo(wxUserInfo) {
+    let result = await ajaxProvider.request('registUserByWeiXinUserInfo', wxUserInfo);
+    return result;
   }
 
   async login() {
@@ -21,4 +25,4 @@ class PassportService {
   }
 }
 
-export default PassportService;
+export default new PassportService();

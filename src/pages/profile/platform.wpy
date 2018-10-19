@@ -1,11 +1,360 @@
 <style lang="less">
+view.btn-show-dialog {
+  background-color: #fff;
+  width: 100%;
+  color: #999;
+  font-size: 36rpx;
+  text-align: center;
+  display: flex;
+  flex-direction: rows;
+  align-items: center;
+  justify-content: center;
+  margin: 20rpx 0;
+  height: 140rpx;
+  box-shadow: rgba(0, 0, 0, 0.07) 0 4rpx 10rpx 0;
 
+  i {
+    margin-right: 24rpx;
+  }
+}
+.platforms-wrapper {
+  padding: 34rpx 44rpx 48rpx;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.07) 0 4rpx 10rpx 0;
+  view.info {
+    border-bottom: 1rpx solid #eee;
+    padding-bottom: 34rpx;
+    label {
+      color: #000;
+      font-size: 36rpx;
+      margin-right: 18rpx;
+    }
+
+    text {
+      color: #999;
+      font-size: 28rpx;
+    }
+
+    view {
+      float: right;
+      border-radius: 44rpx;
+      border: 2rpx solid #eee;
+      color: #999;
+      font-size: 24rpx;
+      width: 160rpx;
+      height: 64rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  view.list-wrapper {
+    margin-top: 20rpx;
+
+    &>text {
+      margin: 0rpx 0 40rpx;
+      display: block;
+      color: #000;
+      font-size: 28rpx;
+    }
+
+    view.list {
+      box-sizing: border-box;
+      view.item {
+        float: left;
+        width: 33.33%;
+        height: 122rpx;
+        margin: 0 0 26rpx 0;
+        padding: 0 13rpx;
+        box-sizing: border-box;
+        view {
+          position: relative;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          border: 2rpx solid #eee;
+          border-radius: 20rpx;
+          font-size: 28rpx;
+          color: #999;
+          height: 100%;
+          width: 100%;
+          text-align: center;
+
+          icon {
+            position: absolute;
+            right: 8rpx;
+            top: 8rpx;
+          }
+
+          &.selected {
+            border-color: #4475FD;
+            color: #4475FD;
+          }
+        }
+
+        &:nth-child(3n+1) {
+          padding-left: 0;
+        }
+        &:nth-child(3n+3) {
+          padding-right: 0;
+        }
+      }
+    }
+  }
+}
+.modal {
+  & > view {
+    padding: 42rpx 40rpx 64rpx 40rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  h3 {
+    display: block;
+    width: 100%;
+    color: #333;
+    font-size: 40rpx;
+    margin-bottom: 38rpx;
+  }
+
+  input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border-radius: 10rpx;
+    background-color: #f5f5f5;
+    padding: 0 44rpx;
+    height: 100rpx;
+    margin-bottom: 20rpx;
+    border: 1px solid transparent;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+
+    &.has-error {
+      border-color: #ff4646;
+    }
+  }
+
+  .input-placeholder {
+    color: #999;
+    font-size: 28rpx;
+  }
+
+  text {
+    color: #ff4646;
+    font-size: 28rpx;
+    display: block;
+    width: 100%;
+    margin: 0 84rpx 0;
+    visibility: hidden;
+
+    &.show {
+      visibility: visible;
+    }
+  }
+
+  i.close {
+    float: right;
+    margin-top: 10rpx;
+  }
+
+  button {
+    display: block;
+    margin-top: 12rpx;
+    width: 100%;
+  }
+}
 </style>
 <template>
-
+  <view class="container">
+    <view @tap="showDialog" class="btn-show-dialog"><i class="foton-ui plus"></i>添加账号</view>
+    <view class="platforms-wrapper">
+      <view class="info" hidden="{{ !selectedPlatform }}">
+        <label>{{ selectedPlatform.userName }}</label>
+        <text>{{ selectedPlatform.nickName }}</text>
+        <view @tap="removePlatform">解除绑定</view>
+      </view>
+      <view class="list-wrapper">
+        <text>请选择您要关注的企业平台</text>
+        <view class="list clearfix">
+          <repeat for="{{platforms}}" key="index" index="index" item="item">
+            <view @tap="selectPlatform({{index}})" class="item">
+              <view class="{{ item.selected ? 'selected' : '' }}">
+                <icon color="#4475FD" type="success" size="17" wx:if="{{ item.code === profile.platformCode && item.userName === profile.userName && item.code === localUser.platformCode }}"></icon>
+                <text>{{ item.viewName }}</text>
+                <text>车联网平台</text>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <button class="btn-blue" @tap="loginTo" hidden="{{ !selectedPlatform }}">确定</button>
+      </view>
+    </view>
+    <view class="modal" hidden="{{ !isShowAddPlatformDialog }}">
+      <view>
+        <h3>绑定车联网账号<i class="foton-ui close" @tap="hideDialog" wx:if="{{ !(!platforms || platforms.length === 0) }}"></i></h3>
+        <input class="{{ enableValidate && newPlatform.userName.length === 0 ? 'has-error' : '' }}" placeholder="请输入您注册的车联网账号" max-length="12" placeholder-class="input-placeholder" @input="onInputUserName" />
+        <input class="{{ enableValidate && newPlatform.code.length === 0 ? 'has-error' : '' }}" placeholder="请输入企业代码" max-length="12" placeholder-class="input-placeholder" @input="onInputCode" />
+        <input class="{{ enableValidate && newPlatform.password.length === 0 ? 'has-error' : '' }}" placeholder="请输入此车联网账号的密码" max-length="12" placeholder-class="input-placeholder" @input="onInputPassword"/>
+        <text class="{{ !formErrorMsg || formErrorMsg.length === 0 ? 'hide' : 'show' }}">{{ formErrorMsg || '无' }}</text>
+        <button class="btn-blue" @tap="addPlatform">确定</button>
+      </view>
+    </view>
+  </view>
 </template>
-<script>
-export default {
 
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import profileService from '../../services/profile';
+import toast from '../../lib/toast';
+
+@connect({
+  profile (state) {
+    return state.profile.user;
+  }
+})
+export default class ProfilePlatform extends wepy.page {
+
+  config = {
+    navigationBarTitleText: '绑定车联网账号',
+  };
+  components = {
+  };
+
+  mixins = [];
+
+  data = {
+    localUser: null,
+    isShowAddPlatformDialog: false,
+    enableValidate: false,
+    selectedPlatform: null,
+    platforms: [],
+    newPlatform: {
+      code: '',
+      userName: '',
+      password: ''
+    },
+    formErrorMsg: ''
+  };
+
+  methods = {
+    loginTo() {
+      this.localUser.platformCode = this.selectedPlatform.code;
+      wepy.setStorageSync('currentUser', this.localUser);
+      wepy.switchTab({
+        url: '/pages/index'
+      });
+    },
+    async removePlatform () {
+      wepy.showLoading({
+        title: '提交中'
+      });
+      let result = await profileService.removePlatform(this.selectedPlatform);
+      toast.showByResult(result);
+      await this.syncPlatforms();
+      wepy.hideLoading();
+      this.selectedPlatform = null;
+      this.$apply();
+    },
+    selectPlatform (index) {
+      if (this.selectedPlatform) this.selectedPlatform.selected = false;
+      let item = this.platforms[index];
+      item.selected = true;
+      this.selectedPlatform = item;
+    },
+    async addPlatform () {
+      this.enableValidate = true;
+      if (this.newPlatform.code.length === 0 || this.newPlatform.userName.length === 0 || this.newPlatform.password.length === 0) {
+        return;
+      }
+      wepy.showLoading({
+        title: '保存中'
+      });
+      let result = await profileService.addPlatform(this.newPlatform);
+      toast.showByResult(result);
+      if (result.code !== 200) {
+        this.formErrorMsg = result.msg;
+      } else {
+        this.hideAddPlatformDialog();
+      }
+      await this.syncPlatforms();
+      wepy.hideLoading();
+      this.$apply();
+    },
+    onInputCode (e) {
+      this.enableValidate = false;
+      this.formErrorMsg = '';
+      this.newPlatform.code = e.detail.value.trim();
+    },
+    onInputPassword (e) {
+      this.enableValidate = false;
+      this.formErrorMsg = '';
+      this.newPlatform.password = e.detail.value.trim();
+    },
+    onInputUserName (e) {
+      this.enableValidate = false;
+      this.formErrorMsg = '';
+      this.newPlatform.userName = e.detail.value.trim();
+    },
+    hideDialog () {
+      this.hideAddPlatformDialog();
+    },
+    showDialog () {
+      this.showAddPlatformDialog();
+    }
+  };
+
+  events = {
+  };
+
+  onLoad () {
+    this.localUser = wepy.getStorageSync('currentUser');
+  }
+
+  onHide () {
+  }
+
+  hideAddPlatformDialog () {
+    this.isShowAddPlatformDialog = false;
+    this.formErrorMsg = '';
+  }
+
+  showAddPlatformDialog () {
+    this.isShowAddPlatformDialog = true;
+    this.formErrorMsg = '';
+  }
+
+  async syncPlatforms () {
+    let result = await profileService.getPlatforms();
+    this.platforms = result.list.map((e, i) => {
+      e.viewName = e.name.replace('车联网平台', '');
+      e.index = i;
+      e.selected = false;
+      return e;
+    });
+    if (this.platforms.length > 0) {
+    } else {
+      this.showAddPlatformDialog();
+    }
+  }
+
+  async onShow () {
+    wepy.showLoading({
+      title: '加载中'
+    });
+    await this.syncPlatforms();
+    wepy.hideLoading();
+    this.$apply();
+  }
+
+  onUnLoad () {
+  }
 }
 </script>

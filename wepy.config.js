@@ -1,5 +1,7 @@
 const path = require('path');
 let prod = process.env.NODE_ENV === 'production';
+let lessFn = require('less-plugin-functions');
+let lessFns = new lessFn();
 
 module.exports = {
   eslint: true,
@@ -15,6 +17,7 @@ module.exports = {
   },
   compilers: {
     less: {
+        plugins: [lessFns]
     },
     babel: {
       sourceMap: true,

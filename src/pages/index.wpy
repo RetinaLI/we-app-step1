@@ -1,68 +1,735 @@
 <style lang="less">
+@import "../style/global.less";
+.container {
+  background-color: #F8F8F8;
+  .top-info {
+    padding: 24rpx 40rpx;
+    color: #999;
+    font-size: 28rpx;
+    line-height: 40rpx;
+  }
+  .bg {
+    margin: 0 16rpx 20rpx;
+    padding: 20rpx 0;
+    background-color: #fff;
+    border-radius: 20rpx;
+  }
+  .sub-title {
+    font-size: 28rpx;
+    color: #333;
+    line-height: 40rpx;
+    text-indent: 36rpx;
+  }
+  .summary {
+    padding: 0 54rpx;
+    min-height:480rpx;
+    li {
+      display: inline-block;
+      padding: 28rpx 0;
+      width: 33%;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+      &:nth-last-child(2),&:last-child {
+        border-bottom: none;
+      }
+      image {
+        margin-bottom: 6rpx;
+        width: 72rpx;
+        height: 72rpx;
+      }
+      .num {
+        color: #333;
+        font-size: 32rpx;
+        line-height: 38rpx;
+        margin-bottom: 4rpx;
+      }
+      span {
+        color: #999;
+        font-size: 24rpx;
+        line-height: 34rpx;
+      }
+    }
+  }
+  .hots {
+    padding-bottom: 0;
+    .chart-map {
+      margin-bottom: 40rpx;
+      width: 100%;
+      height: 460rpx;
+    }
+    .map-list {
+      height: 420rpx;
+      swiper {
+        height: 100%;
+      }
+      swiper-item {
+        &:first-child .map-list-item li:nth-child(1),
+        &:first-child .map-list-item li:nth-child(2),
+        &:first-child .map-list-item li:nth-child(3) {
+          b, text {
+            color: @normal;
+          }
+        }
+      }
+      .map-list-item {
+        display: flex;
+        flex-flow: column wrap;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        height: 420rpx;
+        li {
+            margin-bottom: 26rpx;
+            width: 50%;
+            color: #333;
+            font-size: 28rpx;
+            line-height: 40rpx;
+            b {
+              display: inline-block;
+              margin: 0 20rpx 0 50rpx;
+              width: 56rpx;
+              height: 34rpx;
+              text-align: center;
+              color: rgba(0,0,0,0.8);
+              font-size: 26rpx;
+              font-weight: bold;
+              border-radius: 18rpx;
+              background-color: #F5F5F5;
+              vertical-align: middle;
+            }
+            label {
+              display: inline-block;
+              width: 108rpx;
+            }
+            text {
+              display: inline-block;
+              color: @c999;
+              font-size: 24rpx;
+              line-height: 34rpx;
+            }
+          }
+      }
+    }
+  }
+  .equip-trend {
+    .chart-line {
+      width: 100%;
+      height: 440rpx;
+    }
+  }
+  .car-scale {
+    .chart-pie {
+      width: 100%;
+      height: 490rpx;
+      background: url(data:image/png;base64,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) no-repeat center;
+      background-size: 80rpx auto;
+    }
+    .pie-list {
+      display: flex;
+      flex-flow: column wrap;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      height: 180rpx;
+      li {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20rpx;
+        width: 50%;
+        color: #333;
+        font-size: 28rpx;
+        line-height: 40rpx;
+        i {
+          display: inline-block;
+          margin: 0 16rpx 0 60rpx;
+          width: 12rpx;
+          height: 12rpx;
+          border-radius: 50%;
+          vertical-align: middle;
+        }
+        label {
+          display: block;
+          flex: 1;
+          width: 130rpx;
+        }
+        text {
+          display: block;
+          flex: 1;
+          color: @c999;
+          font-size: @font-size;
+        }
+      }
+    }
+  }
+}
 </style>
+
 <template>
   <view class="container">
-    <text>欢迎，{{ profile.name }}</text>
-    <view class="weui-cells weui-cells_after-title">
-      <navigator url="car-detail" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-        <view class="weui-cell__bd">车辆详情</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-      </navigator>
-      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-        <view class="weui-cell__bd">cell standard</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-      </navigator>
+    <view class="top-info">{{ profile.userName }}，您好！欢迎使用{{ profile.platformName }}</view>
+    <view class="bg summary">
+      <repeat for="{{ summaryData }}" key="index" index="index" item="item">
+        <li>
+          <image src="{{ item.src }}"></image>
+          <view class="num">{{ item.number }}</view>
+          <span>{{ item.title }}</span>
+        </li>
+      </repeat>
+    </view>
+    <!--分布热点-->
+    <view class="bg hots">
+      <view class="sub-title">分布热点</view>
+      <canvasMap class='chart-map' @ready.user="onChartMapReady"></canvasMap>
+      <view class="map-list">
+        <swiper indicator-dots="{{indicatorDots}}" indicator-color="rgba(68,117,253,0.2)" indicator-active-color="#4475FD"
+                autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
+          <block>
+            <swiper-item>
+              <view class="map-list-item">
+                  <repeat for="{{ mapList }}" key="index" index="index" item="item" wx:if="{{ index<12 }}">
+                    <li>
+                      <b>{{ index + 1 }}.</b>
+                      <label>{{ item.name }}</label>
+                      <text>{{ item.value }}</text>
+                    </li>
+                  </repeat>
+              </view>
+            </swiper-item>
+            <swiper-item>
+              <view class="map-list-item">
+                <repeat for="{{ mapList }}" key="index" index="index" item="item" wx:if="{{ index>=12 && index<24 }}">
+                  <li>
+                    <b>{{ index + 1 }}.</b>
+                    <label>{{ item.name }}</label>
+                    <text>{{ item.value }}</text>
+                  </li>
+                </repeat>
+              </view>
+            </swiper-item>
+            <swiper-item>
+              <view class="map-list-item">
+                <repeat for="{{ mapList }}" key="index" index="index" item="item" wx:if="{{ index>=24 && index<36 }}">
+                  <li>
+                    <b>{{ index + 1 }}.</b>
+                    <label>{{ item.name }}</label>
+                    <text>{{ item.value }}</text>
+                  </li>
+                </repeat>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
+      </view>
+    </view>
+    <!--配装趋势-->
+    <view class="bg equip-trend">
+      <view class="sub-title">配装趋势</view>
+      <canvasLine class='chart-line' @ready.user="onChartLineReady"></canvasLine>
+    </view>
+    <!--车型比例-->
+    <view class="bg car-scale">
+      <view class="sub-title">车型比例</view>
+      <canvasPie class='chart-pie' @ready.user="onChartPieReady"></canvasPie>
+      <view class="pie-list">
+        <repeat for="{{ carScaleData }}" key="index" index="index" item="item">
+          <li>
+            <i style="background:{{ item.color }}"></i>
+            <label>{{ item.name }}</label>
+            <text>{{ item.value }}</text>
+          </li>
+        </repeat>
+      </view>
     </view>
   </view>
 </template>
 
+
 <script>
-import wepy from 'wepy';
-import { connect } from 'wepy-redux';
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import profileService from '../services/profile';
 
-@connect({
-  profile (state) {
-    return state.profile.user;
-  }
-})
+  import ecCanvas from '../plugins/ec-canvas/ec-canvas';
+  import * as echarts from '../plugins/ec-canvas/echarts';
+  import { geoJson } from '../plugins/ec-canvas/china';
 
-export default class Index extends wepy.page {
-
-  config = {
-    navigationBarTitleText: '首页'
-  };
-  components = {
-  };
-
-  mixins = [];
-
-  data = {
-  };
-
-  methods = {
-    tapNav (path) {
-      console.log(path);
-      wx.redirectTo(`pages/car-detail/${path}`);
+  @connect({
+    profile (state) {
+      return state.profile.user;
     }
-  };
+  })
 
-  events = {
-  };
+  export default class Index extends wepy.page {
 
-  onLoad () {
-    console.info('onLoad');
+    config = {
+      navigationBarTitleText: '首页'
+    };
+    components = {
+      'canvasMap': ecCanvas,
+      'canvasLine': ecCanvas,
+      'canvasPie': ecCanvas
+    };
+
+    mixins = [];
+
+    data = {
+      summaryData: [
+        {id: 1, title: '所有车辆', number: 0, src: '../assets/index/icon1-1.svg'},
+        {id: 2, title: '今日在线', number: 0, src: '../assets/index/icon1-2.svg'},
+        {id: 3, title: '今日离线', number: 0, src: '../assets/index/icon1-3.svg'},
+        {id: 4, title: '当前行驶', number: 0, src: '../assets/index/icon1-4.svg'},
+        {id: 5, title: '当前停车', number: 0, src: '../assets/index/icon1-5.svg'}
+      ],
+      indicatorDots: true,
+      autoplay: false,
+      interval: 5000,
+      duration: 1000,
+      mapList: [],
+      markPointData: [],
+      maxValue: 0,
+      minValue: 0,
+      lineData: [],
+      xAxisData: [],
+      carScaleData: [],
+      pieColor: ['#678EFB', '#10D988', '#F09930', '#FDD02B', '#9155BC']
+    };
+
+    methods = {
+      onChartMapReady: (canvas, width, height, callback) => {
+        echarts.registerMap('china', geoJson);
+        this.chartMap = echarts.init(canvas, null, {
+          width: width,
+          height: height
+        });
+        canvas.setChart(this.chartMap);
+        callback(this.chartMap);
+        this.bindChartMap();
+      },
+      onChartLineReady: (canvas, width, height, callback) => {
+        this.chartLine = echarts.init(canvas, null, {
+          width: width,
+          height: height
+        });
+        canvas.setChart(this.chartLine);
+        callback(this.chartLine);
+        this.bindChartLine();
+      },
+      onChartPieReady: (canvas, width, height, callback) => {
+        this.chartPie = echarts.init(canvas, null, {
+          width: width,
+          height: height
+        });
+        canvas.setChart(this.chartPie);
+        callback(this.chartPie);
+        this.bindChartPie();
+      }
+    };
+
+    events = {
+    };
+
+    async onLoad () {
+      console.info('onLoad');
+      wepy.showLoading({
+        title: '加载中'
+      });
+      await this.getCarSituation();
+      await this.getProvinceCarInfo();
+      await this.getCarConfigurationInfo();
+      await this.getCarModelsInfo();
+      wepy.hideLoading();
+      this.$apply();
+      this.bindChartMap();
+      this.bindChartLine();
+      this.bindChartPie();
+    }
+
+    onHide() {
+      console.info('onHide');
+    }
+
+    onShow() {
+      console.info('onShow');
+    }
+
+    onUnLoad() {
+      console.info('onUnLoad');
+    }
+
+    // 车辆状况
+    async getCarSituation () {
+      let result = await profileService.getCarSituation();
+      this.summaryData = [];
+      let carStatistics = result.carStatistics;
+      this.summaryData = [
+        {id: 1, title: '所有车辆', number: carStatistics.allCar, src: '../assets/index/icon1-1.svg'},
+        {id: 2, title: '今日在线', number: carStatistics.onlineToday, src: '../assets/index/icon1-2.svg'},
+        {id: 3, title: '今日离线', number: carStatistics.offlineToday, src: '../assets/index/icon1-3.svg'},
+        {id: 4, title: '当前行驶', number: carStatistics.drive, src: '../assets/index/icon1-4.svg'},
+        {id: 5, title: '当前停车', number: carStatistics.paking, src: '../assets/index/icon1-5.svg'}
+      ];
+    }
+
+    // 各省车辆情况
+    async getProvinceCarInfo() {
+      let result = await profileService.getProvinceCarInfo();
+      this.mapList = result.mapList;
+      let seriesData = this.convertProvinceName(this.convertArrJsonName(result.mapList));
+      let length = result.mapList.length;
+      seriesData.sort((a, b) => b.value - a.value);
+      this.markPointData = seriesData.slice(0, 3);
+      this.maxValue = seriesData[0].value;
+      this.minValue = seriesData[length - 1].value;
+      this.markPointData = this.markPointData.map(v => {
+        v.coord = geoJson.features.find(x => x.properties.name === v.name).properties.cp;
+        return v;
+      });
+    }
+
+    // 近六个月车辆配装情况
+    async getCarConfigurationInfo() {
+      let result = await profileService.getCarConfigurationInfo();
+      result.carConfigurationData.map(item => {
+        this.lineData.push(item.value);
+        this.xAxisData.push(item.month);
+      });
+    }
+
+    // 各车型车辆数
+    async getCarModelsInfo() {
+      let result = await profileService.getCarModelsInfo();
+      this.carScaleData = result.carScaleData.map((item, key) => {
+        return {
+          name: item.name,
+          value: item.value,
+          color: this.pieColor[key]
+        };
+      });
+    }
+
+    bindChartMap() {
+      let option = {
+        backgroundColor: '#fff',
+        tooltip: {
+          show: false
+        },
+        visualMap: {
+          min: this.minValue,
+          max: this.maxValue,
+          text: ['高','低'],
+          orient: 'horizontal',
+          right: 40,
+          itemWidth: 3,
+          itemHeight: 20,
+          padding: [5,9],
+          borderHeight: 60,
+          backgroundColor: 'rgba(68,117,253,0.05)',
+          // borderRadius: 20,
+          inRange: {
+            color: ['rgba(68,117,253,0.1)', '#4475FD']
+          }
+        },
+        // geo: {
+        //   map: 'china',
+        //   roam: true,
+        //   label: {
+        //     normal: {
+        //       show: true,
+        //       textStyle: {
+        //         color: 'red'
+        //       }
+        //     }
+        //   },
+        //   itemStyle: {
+        //     normal:{
+        //       borderColor: 'red'
+        //     },
+        //     emphasis:{
+        //       areaColor: null,
+        //       shadowOffsetX: 0,
+        //       shadowOffsetY: 0,
+        //       shadowBlur: 20,
+        //       borderWidth: 0,
+        //       shadowColor: 'red'
+        //     }
+        //   }
+        // },
+        series: [
+          {
+            type: 'map',
+            mapType: 'china',
+            top: 15,
+            // type: 'scatter',
+            // coordinateSystem: 'geo',
+            itemStyle: {
+              normal: {
+                areaColor: 'rgba(68,117,253,0.2)',
+                borderWidth: 0
+              },
+              emphasis: {
+                areaColor: 'rgba(68,117,253,0.2)'
+              }
+            },
+            silent: false,
+            data: this.mapList,
+            markPoint: {
+              label: {
+                show: true,
+                position: 'right',
+                formatter: '{b}',
+                fontSize: 9,
+                lineHeight: 12,
+                color: '#555',
+                padding: [2, 5],
+                backgroundColor: '#fff',
+                borderRadius: 10
+              },
+              symbol: 'circle',
+              symbolSize: 6,
+              itemStyle: {
+                color: 'blue'
+              },
+              data: this.markPointData
+            }
+          }
+        ]
+      };
+      this.chartMap.setOption(option);
+    }
+
+    bindChartLine() {
+      let option = {
+        backgroundColor: '#fff',
+        tooltip: {
+          trigger: 'axis',
+          showContent: false,
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        legend: {
+          data: ['销量']
+        },
+        grid: {
+          left: '3%',
+          right: '13%',
+          bottom: '8%',
+          containLabel: true
+        },
+        xAxis: {
+          name : '(月份)',
+          nameTextStyle: {
+            align: 'left'
+          },
+          type: 'category',
+          splitLine: {show: true},
+          boundaryGap: true,
+          data: this.xAxisData,
+          axisLine: {
+            lineStyle: {
+              type: 'solid',
+              color: '#666', // 左边线的颜色
+              opacity: 0.8,
+              width: '1' // 坐标线的宽度
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#000' // 坐标值得具体的颜色
+            }
+          },
+          axisTick: {
+            show: false
+          }
+        },
+        yAxis: {
+          name : '(数量)',
+          nameTextStyle: {
+            align: 'left',
+            opacity: 0.3
+          },
+          type: 'value',
+          splitLine: {show: true}, // 去除网格线
+          splitArea: {show: false},
+          axisLine: {
+            lineStyle: {
+              type: 'solid',
+              color: '#666', // 左边线的颜色
+              width: '1' // 坐标线的宽度
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#000' // 坐标值得具体的颜色
+            }
+          },
+          axisTick: {
+            show: false // 刻度值
+          }
+        },
+        series: [{
+          name: '',
+          type: 'line',
+          stack: '总量',
+          symbol: 'none',
+          smooth: true,
+          markPoint: {
+          symbol: 'circle',
+          symbolSize: 12,
+          label: {
+            normal: {
+              show: true,
+              position: 'top',
+              color: '#fff',
+              fontSize: 12,
+              borderWidth: 10,
+              borderRadius: 4,
+              padding: [1, 6, 1, 6],
+              borderColor: '#4F91FF',
+              backgroundColor: '#4F91FF'
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: '#4F91FF',
+              fontSize: 5,
+              borderColor: '#fff',
+              borderWidth: 3,
+              label: {
+                show: false
+              }
+            }
+          },
+          effect: {
+            show: true,
+            shadowBlur: 0
+          },
+          data: [{
+            type: 'average',
+            name: '平均值'
+          }]
+          },
+          label: {
+            normal: {
+              show: true,
+              position: 'top',
+              formatter: '{c}%'
+            }
+          },
+          itemStyle: {
+            label: {
+              show: true
+            },
+            normal: {
+              lineStyle: {
+                width: 3, // 0.1的线条是非常细的了
+                color: '#4F91FF' // 折线颜色
+              }
+            }
+          },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: 'rgba(68,117,253,0.5)' // 0% 处的颜色
+              }, {
+                offset: 1, color: 'rgba(68,117,253,0.1)' // 100% 处的颜色
+              }],
+              globalCoord: true // 缺省为 false
+            }
+          },
+          data: this.lineData
+        }]
+      };
+      this.chartLine.setOption(option);
+    }
+
+    bindChartPie() {
+      let option = {
+        backgroundColor: 'rgba(0,0,0,0)',
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+          bottom: 30,
+          left: 'center',
+          data: [],
+          textStyle: {
+            color: '#aaa',
+            fontSize: 10
+          },
+          icon: 'circle',
+          itemHeight: 6,
+          itemWidth: 8
+        },
+        color: this.pieColor,
+        series: [
+          {
+            name:'',
+            type:'pie',
+            radius: ['40%', '55%'],
+            avoidLabelOverlap: false,
+            label: {
+              normal: {
+                show: true,
+                formatter: '{b|{b}}\n{hr|}{per|{d}%}',
+                position: 'outside',
+                textStyle: {
+                  fontSize: '10',
+                  fontWeight: 'bold',
+                  color: '#666'
+                },
+                rich: {
+                  b: {
+                    color: '#666',
+                    fontSize: 10,
+                    lineHeight: 14,
+                    align: 'center'
+                  },
+                  per: {
+                    color: '#666',
+                    fontSize: 10,
+                    align: 'center'
+                  }
+                }
+              },
+              emphasis: {
+                show: true
+              }
+            },
+            labelLine: {
+              normal: {
+                show: true,
+                // length: 10,
+                // length2: 18,
+              },
+              emphasis: {
+                show: true
+              }
+            },
+            data: this.carScaleData
+          }
+        ]
+      };
+      this.chartPie.setOption(option);
+    }
+
+    // 改字段名
+    convertArrJsonName (json, oldName = 'province', newName = 'name') {
+      let reg = new RegExp(oldName, 'ig');
+      return JSON.parse(JSON.stringify(json).replace(reg, newName));
+    }
+    // 改省份名
+    convertProvinceName (data) {
+      return JSON.parse(JSON.stringify(data).replace(/[省|市|自治区|壮族自治区|回族自治区|维吾尔自治区|特别行政区]/g, ''));
+    }
+
   }
-
-  onHide () {
-    console.info('onHide');
-  }
-
-  onShow () {
-    console.info('onShow');
-  }
-
-  onUnLoad () {
-    console.info('onUnLoad');
-  }
-}
 </script>

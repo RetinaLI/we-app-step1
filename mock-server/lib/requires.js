@@ -9,7 +9,7 @@ module.exports = (_path, ...excludes) => {
     if (excludes.indexOf(_file) > -1) return;
     let fileName = _file.substr(0, _file.lastIndexOf('.'));
     try {
-      moduleMap[fileName]= require(_path + _file);
+      moduleMap[fileName] = require(_path + _file);
     } catch (ex) {
       console.info('load ', _file, ' error:', ex);
     }

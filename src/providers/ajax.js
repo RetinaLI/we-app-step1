@@ -2,10 +2,144 @@ import wepy from 'wepy'
 
 const SERVER_API_ROUTE_MAP = {
   // passport
+  'registUserByWeiXinUserInfo': {
+    url: '/passport/regist',
+    method: 'post',
+    isArray: false
+  },
   'getCurrentUser': {
     url: '/profile/info',
     method: 'get',
     isArray: false
+  },
+  'getProfilePlatforms': {
+    url: '/profile/platform/list',
+    method: 'get',
+    isArray: true
+  },
+  'addPlatform': {
+    url: '/profile/platform/add',
+    method: 'post',
+    isArray: false
+  },
+  'removePlatform': {
+    url: '/profile/platform/remove',
+    method: 'post',
+    isArray: false
+  },
+  // 报告
+  'getReportList': {
+    url: '/report/list',
+    method: 'get',
+    isArray: true
+  },
+  // 车辆详情-实时
+  'getRealTimeInfo': {
+    url: '/car/realTimeInfo',
+    method: 'get',
+    isArray: false
+  },
+  // 车辆详情-画像
+  'getPortraitInfo': {
+    url: '/car/portraitInfo',
+    method: 'get',
+    isArray: false
+  },
+  // 车辆详情-位置
+  'getPositionByVin': {
+    url: '/car/locationInfo',
+    method: 'get',
+    isArray: false
+  },
+  // 车辆列表
+  'getList': {
+    url: '/cars/list',
+    method: 'post',
+    isArray: false
+  },
+  // 品牌列表
+  'getBrands': {
+    url: '/brands',
+    method: 'get',
+    isArray: false
+  },
+  // 型号列表
+  'getTypes': {
+    url: '/types',
+    method: 'post',
+    isArray: false
+  },
+  // 修改用户名
+  'updateUserName': {
+    url: '/profile/userInformation/update',
+    method: 'post',
+    isArray: false
+  },
+  'uploadFile': {
+    url: '/profile/file!uploadFiles.do',
+    method: 'post',
+    isArray: false
+  },
+  'submitSuggest': {
+    url: '/profile/suggest/submit',
+    method: 'post',
+    isArray: false
+  },
+  'getSubscribeConfig': {
+    url: '/profile/suggest/getSubscribeConfig',
+    method: 'get',
+    isArray: false
+  },
+  // 行程
+  'getTripIndex': {
+    url: '/trip/getTripIndex',
+    method: 'get',
+    isArray: false
+  },
+  'getTripMonth': {
+    url: '/trip/getTripMonth',
+    method: 'get',
+    isArray: false
+  },
+  'getTripDay': {
+    url: '/trip/getTripDay',
+    method: 'get',
+    isArray: false
+  },
+  'getTripDayTime': {
+    url: '/trip/getTripDayTime',
+    method: 'get',
+    isArray: false
+  },
+  'getHomeInfo': {
+    url: '/profile/home/homeInfo',
+    method: 'get',
+    isArray: false
+  },
+  'editSubscribeConfig': {
+    url: '/profile/suggest/editSubscribeConfig',
+    method: 'post',
+    isArray: false
+  },
+  'getCarSituation': {
+    url: '/profile/home/carSituation',
+    method: 'get',
+    isArray: false
+  },
+  'getProvinceCarInfo': {
+    url: '/profile/home/provinceCarInfo',
+    method: 'get',
+    isArray: true
+  },
+  'getCarConfigurationInfo': {
+    url: '/profile/home/carConfigurationInfo',
+    method: 'get',
+    isArray: true
+  },
+  'getCarModelsInfo': {
+    url: '/profile/home/carModelsInfo',
+    method: 'get',
+    isArray: true
   }
 };
 
@@ -26,7 +160,7 @@ class AjaxProvider {
   //       }
   //   }
   //   return [realLength, temp];
-  // }
+
 
   getApiInfo (_action) {
     let temp = SERVER_API_ROUTE_MAP[_action];

@@ -1,0 +1,44 @@
+<style lang="less">
+</style>
+<template>
+  <view class="container">
+    <web-view src="{{ url }}"></web-view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class MessageDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '报告'
+    };
+    components = {
+    };
+
+    mixins = [];
+
+    data = {
+      url: ''
+    };
+
+    methods = {
+    };
+
+    events = {
+    };
+
+    onLoad (option) {
+      this.url = decodeURIComponent(option.url);
+    }
+
+    onHide() {
+    }
+
+    async onShow() {
+    }
+
+    onUnLoad() {
+    }
+  }
+</script>
