@@ -1,0 +1,140 @@
+<style lang="less">
+@import "../style/global.less";
+
+  .content {
+    box-sizing: border-box;
+    width: 100%;
+    height: 420rpx;
+    background-color: #fff;
+    padding: 30rpx 36rpx;
+    >view {
+      padding: 0 20rpx;
+    }
+    .vin {
+      font-size: 40rpx;
+      color: #333;
+      line-height: 100rpx;
+    }
+    .lpn {
+      color: @normal;
+      font-size: 24rpx;
+      border: 1px solid @normal;
+      border-radius: 10rpx;
+      padding: 8rpx 16rpx;
+    }
+    .stop-times {
+      margin-left: 34rpx;
+      font-size: 24rpx;
+      color: #333;
+    }
+    .box {
+      margin-top: 30rpx;
+      height: 80rpx;
+      line-height: 80rpx;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      justify-content: space-between;
+      .name {
+        color: #333;
+        font-size: 28rpx;
+      }
+      .value {
+        font-size: 28rpx;
+        color: @normal;
+      }
+    }
+    .times-before, .car-position {
+      .label {
+        font-size: 24rpx;
+        color: #999;
+      }
+      .value {
+        font-size: 24rpx;
+        color: #5C5C5C;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view>
+    <map id="location" longitude="{{carInfo.longitude}}" latitude="{{carInfo.latitude}}" markers="{{marker}}" scale="14" show-location style="width: 100%; height: 780rpx;"></map>
+    <view class="content" wx:if="{{carInfo}}">
+      <view class="vin">{{carInfo.vin}}</view>
+      <view class="flex">
+        <view class="lpn">{{carInfo.lpn}}</view>
+        <view class="stop-times">停车{{carInfo.stopTimes}}</view>
+      </view>
+      <view class="flex box">
+        <view class="acc">
+          <text class="label">ACC：</text>
+          <text class="value">{{carInfo.acc}}</text>
+        </view>
+        <view class="speed">
+          <text class="label">速度：</text>
+          <text class="value">{{carInfo.speed}}km/h</text>
+        </view>
+        <view class="gps">
+          <text class="label">GPS定位：</text>
+          <text class="value">{{carInfo.gps}}</text>
+        </view>
+      </view>
+      <view class="times-before">
+        <text class="label">最后定位时间：</text>
+        <text class="value">{{carInfo.timesBefore}}</text>
+      </view>
+      <view class="car-position">
+        <text class="label">车辆地址：</text>
+        <text class="value">{{carInfo.position}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import CarService from '../services/car';
+import Toast from '../lib/toast';
+
+export default class Location extends wepy.page {
+  config = {
+    navigationBarTitleText: '位置详情'
+  }
+  data = {
+    carInfo: null,
+    marker: [{
+      iconPath: '../assets/portrait/car.png',
+      id: 0,
+      latitude: 0,
+      longitude: 0,
+      width: 46,
+      height: 21
+    }],
+  }
+  async onLoad (params) {
+    wx.showLoading({title: '加载中'});
+
+    let vin = params.vin;
+    let res = await CarService.getPositionByVin({vin});
+    wx.hideLoading();
+    if (!res.timesBefore) {
+      Toast.info('网络错误');
+      return;
+    }
+    Toast.success('');
+
+    let convertTimesBefore = Math.floor((Date.now() - res.timesBefore) / 1000 / 60);   // 分钟
+    if (convertTimesBefore < 1) {
+      convertTimesBefore = '1分钟';
+    } else if (convertTimesBefore > 60) {
+      convertTimesBefore = Math.round(convertTimesBefore / 60) + '小时';
+    } else {
+      convertTimesBefore += '分钟';
+    }
+    res.timesBefore = convertTimesBefore;
+    this.carInfo = res;
+    this.marker[0].longitude = Number(res.longitude);
+    this.marker[0].latitude = Number(res.latitude);
+    this.$apply();
+  }
+}
+</script>

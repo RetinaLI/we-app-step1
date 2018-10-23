@@ -1,0 +1,917 @@
+<style lang="less">
+.container {
+  background-color: #fff;
+  position: relative;
+  height: 100%;
+  .search-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    height: 80rpx;
+    line-height: 80rpx;
+    background-color: #f8f8f8;
+    .choose-item {
+      text-align: center;
+      font-size: 28rpx;
+      position: relative;
+      color:#999;
+      &.types {
+        padding-right: 100rpx;
+      }
+      >.arrow {
+        display: inline-block;
+        height: 0;
+        width: 0;
+        border: 8rpx solid transparent;
+        border-top: 10rpx solid #999;
+        vertical-align:middle;
+        margin-left: 10rpx;
+      }
+      >.arrow-up {
+        display: inline-block;
+        height: 0;
+        width: 0;
+        border: 8rpx solid transparent;
+        border-bottom: 10rpx solid #999;
+        vertical-align:middle;
+        margin-left: 10rpx;
+      }
+    }
+    .search {
+      width: 196rpx;
+      text-align: center;
+      .placeholder {
+        position: relative;
+        &::before {
+          content: "";
+          position: absolute;
+          width: 4rpx;
+          height: 40rpx;
+          background: #ddd;
+          left: 0;
+          top: 20rpx;
+        }
+        image{
+          width: 40rpx;
+          height: 40rpx;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}
+.car-list {
+  width: 100%;
+  margin-top: 80rpx;
+  li {
+    position: relative;
+    background: #fff;
+    display: block;
+    .wrap {
+      margin: 24rpx;
+      margin-top: 16rpx;
+      display: flex;
+      flex-direction: row;
+      border-bottom: 1px solid #eee;
+      .car-img {
+        width: 160rpx;
+        margin-right: 15rpx;
+        .icon {
+          width: 160rpx;
+          height: 120rpx;
+        }
+      }
+      .data-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        justify-content: center;
+        > view {
+          margin-bottom: 12rpx;
+        }
+        .vin {
+          float: left;
+          margin-right: 22rpx;
+          color: #222;
+          font-size: 32rpx;
+          font-weight: 700;
+          line-height: 44rpx;
+        }
+        .lpn {
+          float: left;
+          font-size: 20rpx;
+          line-height: 30rpx;
+          color: #4475FD;
+          border: 1px solid #4475FD;
+          padding:0 4rpx;
+          margin-top: 6rpx;
+          border-radius:7rpx;
+        }
+        .brand {
+          font-size: 24rpx;
+          line-height: 34rpx;
+        }
+        .last-line {
+          font-size: 24rpx;
+          .pos {
+            display: inline-block;
+            float: left;
+            color: #7f7f7f;
+            width: 350rpx;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 34rpx;
+            .pos-icon{
+              display: inline-block;
+              width: 21rpx;
+              height: 27rpx;
+              vertical-align: top;
+            }
+          }
+          .time {
+            float: left;
+            color: #bbb;
+            line-height: 34rpx;
+          }
+        }
+      }
+      .arr-right {
+        position: absolute;
+        right: 46rpx;
+        top: 50%;
+        display: inline-block;
+        opacity: .2;
+        vertical-align: middle;
+        width: 20rpx;
+        height: 20rpx;
+        border-top: 2px solid #000;
+        border-right: 2px solid #000;
+        transform: translateX(-3px) translateY(-20rpx) rotate(45deg);
+      }
+    }
+  }
+}
+.show-choose {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 80rpx;
+  left: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  overflow: hidden;
+  .brand-choose {
+    width: 100%;
+    background: #fff;
+    padding: 33rpx 0 14rpx 24rpx;
+    overflow: hidden;
+    view {
+      float: left;
+      margin-bottom: 10rpx;
+      margin-right: 11rpx;
+
+      .name {
+        border: 1px solid #eee;
+        border-radius: 44rpx;
+        padding: 14rpx 30rpx;
+        font-size: 24rpx;
+        color: #222;
+        margin-bottom: 8rpx;
+        margin-right: 14rpx;
+      }
+    }
+    .others {
+      height: 100%;
+      width: 100%;
+      background: red;
+    }
+  }
+}
+
+.search-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #fff;
+  z-index: 20;
+  .search-bar {
+    position: fixed;
+    width: 100%;
+    background: #fff;
+    overflow: hidden;
+    .back {
+      display: inline-block;
+      width: 70rpx;
+      height: 66rpx;
+      .back-icon{
+        position: absolute;
+        left: 43rpx;
+        top: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        width: 20rpx;
+        height: 20rpx;
+        border-top: 2px solid #000;
+        border-right: 2px solid #000;
+        transform: translateX(-3px) translateY(-16rpx) rotate(225deg);
+      }
+    }
+    .search-input {
+      display: inline-block;
+      width: 410rpx;
+      height: 60rpx;
+      line-height: 60rpx;
+      min-height: 60rpx;
+      border-radius: 30rpx;
+      background: #eee;
+      font-size: 30rpx;
+      color: #000;
+      padding-left: 28rpx;
+      margin-left: 20rpx;
+      margin-right: 20rpx;
+    }
+    .search-button {
+      width: 160rpx;
+      height: 60rpx;
+      font-size: 32rpx;
+      line-height: 60rpx;
+      color: #fff;
+      border-radius: 30rpx;
+      background: #4475fd;
+      margin-top: 0;
+    }
+  }
+  .search-result {
+    margin-top: 80rpx;
+    li {
+      display: block;
+      background: #f8f8f8;
+      &:hover{
+        background: #f0f0f0;
+      }
+      view {
+        height: 120rpx;
+        line-height: 120rpx;
+        border-bottom: 1px solid #ddd;
+        background: #f8f8f8;
+        padding: 0 88rpx;
+        margin: 0 35rpx;
+        color: #4475fd;
+        position: relative;
+        &:hover{
+          background: #f0f0f0;
+        }
+        .arrow {
+          position: absolute;
+          right: 10rpx;
+          top: 50%;
+          width: 36rpx;
+          height: 36rpx;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+}
+
+.mask {
+  position: fixed;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  top: 0;
+  left: 0;
+}
+
+.multiSelector{
+  width: 700rpx;
+  .box {
+    display:inline-block;
+    width:100%;
+    .label {
+      display: inline-block;
+      text-align: center;
+      font-size: 28rpx;
+      position: relative;
+      color:#999;
+      width: 44%;
+      &.types {
+        padding-right: 60rpx;
+      }
+      >.arrow {
+        display: inline-block;
+        height: 0;
+        width: 0;
+        border: 8rpx solid transparent;
+        border-top: 10rpx solid #999;
+        vertical-align:middle;
+        margin-left: 10rpx;
+      }
+      >.arrow-up {
+        display: inline-block;
+        height: 0;
+        width: 0;
+        border: 8rpx solid transparent;
+        border-bottom: 10rpx solid #999;
+        vertical-align:middle;
+        margin-left: 10rpx;
+      }
+    }
+  }
+
+}
+
+.new-block{
+  width:80%;
+  height: 100px;
+  background-color: #fff;
+  &:nth-child(even){
+    background-color: #333;
+  }
+}
+// .refresh-container{
+//   width:100%;
+//   height: 100vh;
+//   overflow-y: scroll;
+//   -webkit-overflow-scrolling:touch;
+// }
+.refresh-loader{
+  width:100%;
+  height:100%;
+}
+@keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg) scale(1);
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    -webkit-transform: rotate(180deg) scale(1);
+    transform: rotate(180deg) scale(1);
+  }
+  100% {
+    -webkit-transform: rotate(360deg) scale(1);
+    transform: rotate(360deg) scale(1);
+  }
+}
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg) scale(1);
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    -webkit-transform: rotate(180deg) scale(1);
+    transform: rotate(180deg) scale(1);
+  }
+  100% {
+    -webkit-transform: rotate(360deg) scale(1);
+    transform: rotate(360deg) scale(1);
+  }
+}
+.refresh-content {
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+.refresh-load {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  top: -50px;
+  left: 0;
+  padding: 8px 0;
+}
+.refresh-pull-arrow {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  visibility: visible;
+  margin-left: -10px;
+  margin-top: -10px;
+  background: no-repeat center;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTIzMzMzMjQ5ODAwIiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI4OTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTg3My42IDQxOS4ybC0zNTUuMi0zNjEuNmMtOS42LTkuNi0yMi40LTkuNi0zMiAwbC0zNTUuMiAzNjhjLTkuNiA5LjYtOS42IDIyLjQgMCAzMiA5LjYgOS42IDIyLjQgOS42IDMyIDBsMzE2LjgtMzI5LjYgMCA4MjguOGMwIDEyLjggOS42IDIyLjQgMjIuNCAyMi40czIyLjQtOS42IDIyLjQtMjIuNGwwLTgyMi40IDMxMC40IDMxNi44YzkuNiA5LjYgMjIuNCA5LjYgMzIgMEM4ODMuMiA0NDEuNiA4ODMuMiA0MjUuNiA4NzMuNiA0MTkuMnoiIHAtaWQ9IjI4OTMiPjwvcGF0aD48L3N2Zz4=');
+  background-size: cover;
+  z-index: 10;
+  -webkit-transform: rotate(0deg) translate3d(0, 0, 0);
+  transform: rotate(0deg) translate3d(0, 0, 0);
+  -webkit-transition-duration: 300ms;
+  transition-duration: 300ms;
+}
+.refresh-content.refresh-pull-down .refresh-pull-arrow {
+  -webkit-transform: rotate(0deg) translate3d(0,0,0);
+  transform: rotate(0deg) translate3d(0,0,0);
+}
+.refresh-content.refresh-pull-up .refresh-pull-arrow {
+  -webkit-transform: rotate(180deg) translate3d(0,0,0);
+  transform: rotate(180deg) translate3d(0,0,0);
+}
+.refreshing .refresh-pull-arrow{
+  background-image: url('data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iciIgd2lkdGg9JzEyMHB4JyBoZWlnaHQ9JzEyMHB4JyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJub25lIiBjbGFzcz0iYmsiPjwvcmVjdD4KICAgIDxyZWN0IHg9JzQ2LjUnIHk9JzQwJyB3aWR0aD0nNycgaGVpZ2h0PScyMCcgcng9JzUnIHJ5PSc1JyBmaWxsPScjRTlFOUU5JwogICAgICAgICAgdHJhbnNmb3JtPSdyb3RhdGUoMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSc+CiAgICA8L3JlY3Q+CiAgICA8cmVjdCB4PSc0Ni41JyB5PSc0MCcgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHJ4PSc1JyByeT0nNScgZmlsbD0nIzk4OTY5NycKICAgICAgICAgIHRyYW5zZm9ybT0ncm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApJz4KICAgICAgICAgICAgICAgICByZXBlYXRDb3VudD0naW5kZWZpbml0ZScvPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyM5Qjk5OUEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSg2MCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSc+CiAgICAgICAgICAgICAgICAgcmVwZWF0Q291bnQ9J2luZGVmaW5pdGUnLz4KICAgIDwvcmVjdD4KICAgIDxyZWN0IHg9JzQ2LjUnIHk9JzQwJyB3aWR0aD0nNycgaGVpZ2h0PScyMCcgcng9JzUnIHJ5PSc1JyBmaWxsPScjQTNBMUEyJwogICAgICAgICAgdHJhbnNmb3JtPSdyb3RhdGUoOTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNBQkE5QUEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxMjAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNCMkIyQjInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNCQUI4QjknCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxODAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNDMkMwQzEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyMTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNDQkNCQ0InCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNEMkQyRDInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyNzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNEQURBREEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgzMDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNFMkUyRTInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0Pgo8L3N2Zz4=');
+  -webkit-animation: rotate 1s 0s linear infinite;
+  animation: rotate 1s 0s linear infinite;
+}
+
+.loading-load {
+  width: 100%;
+  height: 30px;
+  position: relative;
+  padding: 8px 0;
+}
+.repeat{
+  margin-top: 20px !important;
+}
+</style>
+
+<template>
+  <view class="container">
+    <view class="weui-flex search-box" wx:if="{{!searchSwitch}}">
+      <!-- <view class="weui-flex__item">
+        <view class="choose-item" @tap="brandChoose">品牌<view class="{{arrname}}"></view></view>
+      </view>
+      <view class="weui-flex__item">
+        <view class="choose-item types">型号<view class="arrow"></view></view>
+      </view> -->
+      <picker class="multiSelector" mode="multiSelector" value = "{{multiIndex}}" range = "{{multiArray}}" @change="bindMultiPickerChange" @columnchange='bindMultiPickerColumnChange'>
+        <label class="box">
+          <span class="label brands">{{ multiArray[0][multiIndex[0]]}}<span class="arrow"></span> </span>
+          <span class="label types">{{ multiArray[1][multiIndex[1]] }}<span class="arrow"></span></span>
+        </label>
+      </picker>
+      <view class="search">
+        <view class="placeholder" @tap="searchBtn">
+          <image src="../assets/cars/search@2x.png" class='search-icon'></image>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{brandswitch}}" class="show-choose">
+      <view class="brand-choose">
+        <repeat for="{{ brands }}" key="index" index="index" item="item">
+          <view>
+            <view class="name">{{ item}}</view>
+          </view>
+        </repeat>
+      </view>
+    </view>
+
+    <view wx:if="{{!searchBarShow}}" class="car-list">
+      <scroll-view class="scroll-view" style="height:{{windowHeight}}px;" scroll-y="true" scroll-with-animation="true" bindscrolltolower="onReachBottom" catchscroll="scroll" >
+        <view bind:scrollTop="scrollTop" class="refresh-content refresh-container {{className}}"
+          bind:touchstart="touchstart"
+          bind:touchmove="touchmove"
+          bind:touchend="touchend"
+          animation="{{animationData}}">
+          <view class="refresh-load">
+            <view class="refresh-pull-arrow"></view>
+            <view style="margin-top:45px;">
+              <repeat for="{{ list }}" key="index" index="index" item="item">
+                <li>
+                  <navigator url="car-detail?vin={{item.framenum}}">
+                    <view class="wrap">
+                      <view class='car-img'>
+                        <image src="../assets/cars/shidai@2x.png" class='icon'></image>
+                      </view>
+                      <view class='data-body'>
+                        <view>
+                          <text class="vin">{{ item.framenum}}</text> <text wx:if="{{item.lpn}}" class="lpn">{{ item.lpn }}</text>
+                        </view>
+                        <view class="brand">{{ item.carBrandName}}-{{item.carTypeName}}</view>
+                        <view class="last-line">
+                          <view class="pos"> <image class="pos-icon" src="../assets/cars/location.png"></image> {{ item.LOCATION_INFO}}</view>
+                          <text class="time">{{ item.sendTime}}</text>
+                        </view>
+                      </view>
+                      <view class="arr-right"></view>
+                    </view>
+                  </navigator>
+                </li>
+              </repeat>
+            </view>
+          </view>
+        </view>
+
+      </scroll-view>
+    </view>
+    <view wx:if="{{searchSwitch}}" class="search-page">
+      <view class="search-bar">
+        <view class="back" @tap="toback"> <view class="back-icon"></view> </view>
+        <input class="weui-input search-input" placeholder="请输入VIN或车牌号...." @input="onInputSearch" />
+        <button class="weui-btn mini-btn search-button" type="primary" size="mini">搜索</button>
+      </view>
+      <view class="search-result">
+        <!-- <scroll-view style="height:{{windowHeight}}px;" scroll-y="true" bindscrolltolower="reachSearchBottom" > -->
+          <repeat for="{{ searchRes }}" key="index" index="index" item="item">
+            <li>
+              <navigator url="car-detail?vin={{item.vin}}">
+                <view class="item">{{ item.vin}} <image class="arrow" src="../assets/cars/search-arr.png"></image> </view>
+              </navigator>
+            </li>
+          </repeat>
+        <!-- </scroll-view> -->
+      </view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import CarService from '../services/car';
+import toast from '../lib/toast';
+
+@connect({
+  platform (state) {
+    return state.profile.platform;
+  }
+})
+export default class VehicleInternet extends wepy.page {
+
+  // let locationUrl = require('../assets/cars/location.png');
+  config = {
+    navigationBarTitleText: '车辆列表',
+    navigationBarBackgroundColor: '#fff',
+    navigationBarTextStyle: 'black',
+    backgroundColor: '#fff',
+    onReachBottomDistance: 50
+  };
+
+  components = {
+
+  };
+  data = {
+    brandswitch: false,
+    searchSwitch: false,
+    searchBarShow: false,
+    // arrname: 'arrow',
+    page: 0,
+    pageEnd: false,
+    windowHeight: 0,
+    canUseReachBottom: true,
+    canReachSearchBottom: true,
+    arr: [],
+    list: [],
+
+    multiArray: [['品牌'], ['型号']],
+    multiIndex: [0, 0],
+
+    touchYDelta: '',
+    isLoading: false,  // 是否正在加载
+    translateVal: '',
+    isMoved: false,    // 下拉是否开始
+    firstTouchY: '',   // 下拉开始的Y值
+    initialScroll: '',  // 初始滚动条位置  scrolltop
+    triggerDistance: 100,
+    className: '',
+    animationData: {},
+    animation: {},
+    scrollTop: 0,
+    deviceList: [],
+    brands: [],
+    searchRes: [
+      // {id: 1, vin: 'GHHHHHD2004447', lpn: '鲁GFd433'},
+      // {id: 1, vin: 'GHHHHHD2004447', lpn: '鲁GFd433'},
+      // {id: 1, vin: 'GHHHHHD2004447', lpn: '鲁GFd433'}
+    ]
+  }
+
+  pageIndex = 0;
+  pageSize = 10;
+
+  mixins = [];
+  multiLoading = false;
+
+  methods = {
+    scroll (e) {
+      this.scrollTop = e.detail.scrollTop;
+      this.$apply();
+    },
+    touchstart (ev) {
+      if (this.isLoading) {
+        return;
+      }
+      this.isMoved = false;
+      this.touchYDelta = '';
+      const touchobj = ev.touches[0];
+      this.firstTouchY = parseInt(touchobj.clientY); // 开始时的y值
+      this.initialScroll = this.scrollTop;
+
+    },
+    touchmove (ev) {
+      if (this.isLoading) {
+        return;
+      }
+      let self = this;
+      let moving = function() {
+        let touchobj = ev.touches[0];
+        let touchY = parseInt(touchobj.clientY);
+        let touchYDelta = touchY - self.firstTouchY;
+        self.touchYDelta = touchYDelta;  // 拉动的距离
+        // self.scrollY()
+        // if (self.scrollTop === 0 && touchYDelta > 0) {
+        // }
+        /* eslint-disable */
+        if (self.initialScroll > 0 || self.scrollTop > 0 || self.scrollTop === 0 && touchYDelta < 0) {
+          self.firstTouchY = touchY;
+          return;
+        }
+        /* eslint-enable */
+        let translateVal = Math.pow(touchYDelta, 0.85); // Math.pow(touchYDelta, 0.85)
+        self.animation.translate3d(0, translateVal, 0).step();
+        self.animationData = self.animation.export();
+        self.isMoved = true;
+        if (touchYDelta > self.triggerDistance) {
+          self.className = 'refresh-pull-up';
+        } else {
+          self.className = 'refresh-pull-down';
+        }
+      };
+      this.throttle(moving(), 10);
+    },
+    touchend (ev) {
+      let self = this;
+      if (this.isLoading || !this.isMoved) {
+        this.isMoved = false;
+        return;
+      }
+      // 根据下拉高度判断是否加载
+      if (this.touchYDelta >= this.triggerDistance) {
+        this.isLoading = true;
+        this.animation.translate3d(0, 60, 0).step();
+        this.animationData = this.animation.export();
+        self.className = 'refreshing';
+        this.refresh('success');
+      } else {
+        this.animation.translate3d(0, 0, 0).step({duration: 300});
+        this.animationData = this.animation.export();
+        this.refresh('error');
+      }
+      this.isMoved = false;
+    },
+
+    brandChoose () {
+      this.brandswitch = !this.brandswitch;
+    },
+    searchBtn () {
+      this.searchSwitch = true;
+      this.searchBarShow = true;
+      this.$apply();
+    },
+    onInputSearch (e) {
+      console.log(e.detail.value);
+      // wepy.showLoading({
+      //   title: '加载中...'
+      // });
+      // let res = CarService.getSearchList({
+      //   key: e.detail.value,
+      //   pageIndex: this.pageIndex,
+      //   pageSize: this.pageSize
+      // });
+
+      // console.log(res);
+      // if (res.list && res.list.length > 0) {
+      //   if (this.pageIndex === 0) {
+      //     this.searchRes = res.list;
+      //   } else {
+      //     let temArr = [...this.searchRes, ...res.list];
+      //     this.searchRes = temArr;
+      //   }
+      //   this.$apply();
+      // }
+      // wepy.hideLoading();
+      // toast.success('加载成功');
+    },
+
+    toback () {
+      this.searchSwitch = false;
+      this.searchBarShow = false;
+    },
+
+    bindMultiPickerChange (e) {
+      // console.log('picker发送选择改变，携带值为', e.detail.value);
+      this.multiIndex = e.detail.value;
+    },
+
+    async bindMultiPickerColumnChange (e) {
+      // console.log('修改的列为', e.detail.column, '，值为', e.detail.value);
+      if (this.multiLoading) return;
+      wepy.showLoading({
+        title: '刷新数据'
+      });
+      var data = {
+        multiArray: this.multiArray,
+        multiIndex: this.multiIndex
+      };
+      data.multiIndex[e.detail.column] = e.detail.value;
+      if (e.detail.column === 0) {
+        let res = await CarService.getTypes({
+          brand: 'brand'
+        });
+
+        let typeArr = ['全部'];
+        res.map((val) => {
+          typeArr.push(val.key);
+        });
+        data.multiArray[1] = typeArr;
+        this.$apply();
+      }
+      // console.log(this.multiArray);
+      this.setData(data);
+      wepy.hideLoading();
+      toast.success('加载成功');
+    }
+
+  };
+
+  events = {
+
+  };
+
+  scrollY () {
+    wx.createSelectorQuery().select('#scroll-container').scrollOffset((res) => {
+      this.scrollTop = res.scrollTop;
+    }).exec();
+  }
+
+  refresh (res) {
+    if (res === 'success') {
+      setTimeout(() => {
+        this.reset();
+        // console.log('刷新成功');
+      }, 3000);
+    };
+  }
+
+  reset () {
+    this.isLoading = false;
+    this.className = 'refresh-pull-up';
+    this.animation.translate3d(0, 0, 0).step({duration: 300});
+    this.animationData = this.animation.export();
+    this.className = 'refresh-pull-down';
+    this.$apply();
+  }
+
+  throttle (fn, delay) {
+    let allowSample = true;
+    return function(e) {
+      if (allowSample) {
+        allowSample = false;
+        setTimeout(function() { allowSample = true; }, delay);
+        fn(e);
+      }
+    };
+  }
+
+  onLoad () {
+    let hh = wepy.getSystemInfoSync().windowHeight;
+    this.windowHeight = hh;
+    this.getServerItems();
+    this.getBrands();
+    let animation = wx.createAnimation({
+      duration: 0,
+      timingFunction: 'linear'
+    });
+    this.animation = animation;
+    animation.translate3d(0, 1, 0).step();
+    this.animationData = animation.export();
+  }
+
+  onShow () {
+    // this.getServerItems();
+    // this.getBrands();
+  }
+
+  onReachBottom () {
+    if (!this.canUseReachBottom) return;
+    this.getServerItems();
+  }
+
+  // reachSearchBottom () {
+  //   if (!this.canReachSearchBottom) return;
+  //   console.log('aaa');
+  // }
+
+  async getBrands () {
+    wepy.showLoading({
+      title: '加载中...'
+    });
+    let result = await CarService.getBrands();
+    let arr = ['品牌'];
+    result.list.forEach((val) => {
+      arr.push(val.key);
+    });
+    this.multiArray[0] = arr;
+    let res = await CarService.getTypes({
+      brand: arr[0].key
+    });
+
+    let typeArr = ['型号'];
+    res.map((val) => {
+      typeArr.push(val.key);
+    });
+    this.multiArray[1] = typeArr;
+    this.$apply();
+    wepy.hideLoading();
+    toast.success('加载成功');
+  }
+
+  async getServerItems () {
+    this.canUseReachBottom = false;
+    wepy.showLoading({
+      title: '加载中...'
+    });
+    let result = await CarService.getList({
+      page: this.page
+    });
+    wepy.hideLoading();
+    toast.success('加载成功');
+    console.log(result);
+    if (result.mapList && result.mapList.length > 0) {
+      let temArr = result.mapList;
+      temArr.map((val) => {
+        let nowTime = new Date().getTime();
+        let lastLocaTime = 0;
+        if (val.sendTime) {
+          lastLocaTime = new Date(Date.parse(val.sendTime)).getTime();
+          val.sendTime = lastLocaTime;
+        } else if (val.LASTTIME) {
+          lastLocaTime = new Date(Date.parse(val.sendTime)).getTime();
+          val.sendTime = lastLocaTime;
+        }
+
+        let timeAgo = nowTime - val.sendTime;
+
+        let years = Math.floor(timeAgo / (1000 * 60 * 60 * 24 * 365));
+        let days = Math.floor(timeAgo / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((timeAgo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((timeAgo % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((timeAgo % (1000 * 60)) / 1000);
+        if (years > 0) {
+          val.sendTime = years + '年前';
+        } else if (years <= 0 && days > 0) {
+          val.sendTime = days + '天前';
+        } else if (years <= 0 && days <= 0 && hours > 0) {
+          val.sendTime = hours + '小时前';
+        } else if (years <= 0 && days <= 0 && hours <= 0 && minutes > 0) {
+          val.sendTime = minutes + '分钟前';
+        } else {
+          val.sendTime = seconds + '秒前';
+        }
+
+        // 车牌号优化
+        let lpn = val.lpn;
+        if (lpn !== '') {
+          let char1 = lpn.slice(0, 2);
+          let char2 = lpn.substr(2);
+          val.lpn = char1 + ' ' + char2;
+        }
+
+        // vin优化
+        let framenum = val.framenum;
+        if (framenum !== '') {
+          val.framenum = framenum.slice(0, 8);
+        }
+        console.log(val.framenum);
+
+      });
+      this.arr = this.arr.concat(temArr);
+      this.list = this.arr;
+      console.log(this.list);
+      this.page++;
+      this.canUseReachBottom = true;
+      this.$apply();
+    } else {
+      this.pageEnd = true;
+    }
+
+  }
+
+  // watch = {
+  //   platform: async () => {
+  //     this.list = [];
+  //     this.$apply();
+  //     wepy.showLoading({
+  //       title: '加载中'
+  //     });
+  //   }
+  // }
+
+  onHide () {
+
+  }
+
+  onUnLoad () {
+
+  }
+
+}
+</script>

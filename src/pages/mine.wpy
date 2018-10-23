@@ -1,0 +1,122 @@
+<style lang="less">
+  @import "../style/global.less";
+  .container {
+    background-color: #F8F8F8;
+    color: #000;
+    .weui-cells {
+      padding: 0;
+    }
+    .mine-info-box {
+      padding: 40rpx 54rpx 40rpx 40rpx;
+      margin: 20rpx 0;
+      font-size: 38rpx;
+      box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.07);
+      .weui-cell {
+        padding: 0;
+      }
+      .weui-cell__hd image {
+        background-color: #fff;
+        margin-right: 52rpx;
+        width: 160rpx;
+        height: 160rpx;
+        border-radius: 50%;
+      }
+    }
+    .action-box {
+      padding: 0 46rpx;
+      margin-bottom: 20rpx;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.07);
+      .weui-cell {
+        padding: 56rpx 0 46rpx 8rpx;
+      }
+    }
+
+  }
+</style>
+
+
+<template>
+  <view class="container">
+    <view class="weui-cells weui-cells_after-title mine-info-box">
+      <navigator url="profile/user-information" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__hd">
+          <image src="{{ profile.headImageUrl }}"></image>
+        </view>
+        <view class="weui-cell__bd">{{ profile.userName }}</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+    <view class="weui-cells weui-cells_after-title action-box">
+      <navigator url="profile/platform" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">绑定车联网账号</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+      <navigator url="profile/subscribe" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">消息订阅</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+    <view class="weui-cells weui-cells_after-title action-box">
+      <navigator url="profile/suggest" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">意见反馈</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+      <navigator url="profile/v-info" class="weui-cell weui-cell_access">
+        <view class="weui-cell__bd">版本信息</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  @connect({
+    profile (state) {
+      return state.profile.user;
+    }
+  })
+
+  export default class Mine extends wepy.page {
+
+    config = {
+      navigationBarTitleText: '我的'
+    };
+    components = {
+
+    };
+
+    mixins = [];
+
+    data = {
+
+    };
+
+    methods = {
+    };
+
+    events = {
+    };
+
+    onLoad () {
+      console.info('onLoad');
+    }
+
+    onHide() {
+      console.info('onHide');
+    }
+
+    onShow() {
+      console.info('onShow');
+    }
+
+    onUnLoad() {
+      console.info('onUnLoad');
+    }
+  }
+</script>

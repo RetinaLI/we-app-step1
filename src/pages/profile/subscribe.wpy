@@ -1,0 +1,149 @@
+<style lang="less">
+  @import "../../style/global.less";
+  .container {
+    background-color: #F8F8F8;
+    color: #000;
+    .weui-cells,.weui-cell {
+      padding: 0;
+    }
+    .title {
+      height: 80rpx;
+      line-height: 80rpx;
+      text-indent: 54rpx;
+      color: @c999;
+      font-size: 28rpx;
+    }
+    .message-list {
+      padding: 0 46rpx;
+      font-size: 28rpx;
+      box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.07);
+    }
+    .list-item {
+      padding: 38rpx 4rpx 38rpx 8rpx;
+    }
+  }
+</style>
+
+
+<template>
+  <view class="container">
+    <view class="title">报告消息推送</view>
+    <view class="weui-cells weui-cells_after-title message-list">
+      <repeat for="{{ subscribeData }}" key="index" index="index" item="item" wx:if="{{ index<4 }}">
+        <view class="weui-cell weui-cell_switch list-item">
+          <view class="weui-cell__bd">{{ item.name }}</view>
+          <view class="weui-cell__ft">
+            <switch checked="{{ item.status }}" id="{{ item.subscribeType }}" @change="switchChange"></switch>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="title">服务消息推送</view>
+    <view class="weui-cells weui-cells_after-title message-list">
+      <repeat for="{{ subscribeData }}" key="index" index="index" item="item" wx:if="{{ index>=4 && index<subscribeData.length }}">
+        <view class="weui-cell weui-cell_switch list-item">
+          <view class="weui-cell__bd">{{ item.name }}</view>
+          <view class="weui-cell__ft">
+            <switch checked="{{ item.status }}" id="{{ item.subscribeType }}" @change="switchChange"></switch>
+          </view>
+        </view>
+      </repeat>
+    </view>
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import profileService from '../../services/profile';
+  import toast from '../../lib/toast';
+
+  @connect({
+    profile (state) {
+      return state.profile.user;
+    }
+  })
+
+  export default class ProfileSubscribe extends wepy.page {
+
+    config = {
+      navigationBarTitleText: '消息订阅'
+    };
+    components = {
+
+    };
+
+    mixins = [];
+
+    data = {
+      subscribeData: null,
+      subscribeName: [
+        '车联网销售大数据报告',
+        '车联网服务大数据报告',
+        '车联网整车物流大数据报告',
+        '车联网故障分析大数据报告',
+        '车辆上线通知',
+        '车辆离线通知',
+        '锁车解锁通知',
+        '物流到达提醒',
+        '故障报警提醒'
+      ],
+      configData: {
+        type: '',
+        value: ''
+      }
+    };
+
+    methods = {
+      async switchChange (e) {
+        this.configData.type = e.currentTarget.id;
+        this.configData.value = e.detail.value;
+
+        wepy.showLoading({
+          title: '保存中'
+        });
+        let result = await profileService.editSubscribeConfig(this.configData);
+        toast.showByResult(result);
+        wepy.hideLoading();
+        this.$apply();
+      }
+    };
+
+    events = {
+    };
+
+    async onLoad () {
+      console.info('onLoad');
+      wepy.showLoading({
+        title: '加载中'
+      });
+      await this.getSubscribeConfig();
+      wepy.hideLoading();
+      this.$apply();
+    }
+
+    onHide() {
+      console.info('onHide');
+    }
+
+    onShow() {
+      console.info('onShow');
+    }
+
+    onUnLoad() {
+      console.info('onUnLoad');
+    }
+
+    async getSubscribeConfig() {
+      let result = await profileService.getSubscribeConfig();
+      this.subscribeData = result.subscribeData.map((item, key) => {
+        return {
+          subscribeType: item.subscribeType,
+          status: item.status,
+          name: this.subscribeName[key]
+        };
+      });
+    }
+  }
+</script>

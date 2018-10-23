@@ -59,13 +59,19 @@ const SERVER_API_ROUTE_MAP = {
   },
   // 品牌列表
   'getBrands': {
-    url: '/brands',
+    url: '/common/car_brand!combo.do',
     method: 'get',
     isArray: false
   },
   // 型号列表
   'getTypes': {
-    url: '/types',
+    url: '/common/car_type!combo.do',
+    method: 'post',
+    isArray: false
+  },
+  // 搜索列表
+  'getSearchList': {
+    url: '/search',
     method: 'post',
     isArray: false
   },

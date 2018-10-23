@@ -79,16 +79,23 @@ router.post('/cars/list', (req, res) => {
 });
 
 // 品牌列表
-router.get('/brands', (req, res) => {
+router.get('/common/car_brand!combo.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.car.getBrands());
   }, 3000);
 });
 
 // 型号列表
-router.post('/types', (req, res) => {
+router.post('/common/car_type!combo.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.car.getTypes());
+  }, 3000);
+});
+
+// 搜索列表
+router.post('/search', (req, res) => {
+  setTimeout(() => {
+    res.status(200).send(ControllerMap.car.getSearchList());
   }, 3000);
 });
 

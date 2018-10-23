@@ -1,0 +1,75 @@
+<style lang="less">
+  @import "../../style/global.less";
+  .container {
+    text-align: center;
+    image {
+      width: 140rpx;
+      height: 140rpx;
+      margin: 140rpx 0 40rpx;
+    }
+    .v-title {
+      font-size: 28rpx;
+      color: #333;
+    }
+    .v-info {
+      font-size: 24rpx;
+      margin-top: 20rpx;
+      color: #999;
+    }
+  }
+</style>
+
+
+<template>
+  <view class="container">
+    <image src="../../assets/icons/welcome-logo@2x.png"></image>
+    <view class="v-title">智科车联网平台</view>
+    <view class="v-info">V1.0.0</view>
+
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import profileService from '../../services/profile';
+  import toast from '../../lib/toast';
+
+  export default class ProfileVInfo extends wepy.page {
+
+    config = {
+      navigationBarTitleText: '版本信息'
+    };
+    components = {
+
+    };
+
+    mixins = [];
+
+    data = {
+    };
+
+    methods = {
+    };
+
+    events = {
+    };
+
+    onLoad () {
+      console.info('onLoad');
+    }
+
+    onHide() {
+      console.info('onHide');
+    }
+
+    onShow() {
+      console.info('onShow');
+    }
+
+    onUnLoad() {
+      console.info('onUnLoad');
+    }
+  }
+</script>

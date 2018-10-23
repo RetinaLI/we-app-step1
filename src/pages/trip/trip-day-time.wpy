@@ -1,0 +1,479 @@
+<style lang="less">
+  .function () {
+    .rpx (@x) {
+      return: @x * 2rpx;
+    }
+  }
+
+  .trip-day {
+    padding: 0 rpx(8);
+    .line-eee {
+      border-bottom: 1px solid #eee;
+    }
+    .day-run {
+      .day-map {
+        box-shadow: 0 rpx(2) rpx(5) 0 rgba(0, 0, 0, 0.07);
+        background: #fff;
+        border-radius: rpx(10);
+        overflow: hidden;
+        #day-map-time {
+          width: 100%;
+          height: rpx(260);
+        }
+        .day-map-cover {
+          width: 100%;
+          /*height: 100%;*/
+          background: rgba(0, 0, 0, .3);
+        }
+        .scroll-map-title {
+          box-sizing: border-box;
+          padding: 0 rpx(10);
+          width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+        .map-line-title-list {
+          display: inline-block;
+          padding: 0 rpx(10) 0 rpx(28);
+          box-sizing: border-box;
+        }
+        .map-line-title {
+          box-sizing: border-box;
+          height: rpx(75);
+          padding-top: rpx(13);
+          .map-line-title-item {
+            align-items: center;
+            margin-bottom: rpx(13);
+            text:nth-of-type(1) {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              margin-right: rpx(9);
+              width: rpx(17);
+              height: rpx(17);
+              line-height: 0;
+              border-radius: 50%;
+              font-size: rpx(10);
+              color: #fff;
+              background: #000;
+            }
+            text:nth-of-type(2) {
+              margin-right: rpx(4);
+              line-height: rpx(17);
+              color: #666;
+              font-weight: 600;
+              font-size: rpx(15);
+            }
+            text:nth-of-type(3) {
+              margin-right: rpx(4);
+              line-height: rpx(17);
+              color: #999;
+              font-weight: 400;
+              font-size: rpx(10);
+            }
+          }
+        }
+        .map-echart {
+          margin: 0 rpx(10);
+          padding: rpx(22) 0;
+          & > view {
+            flex: 1;
+          }
+          .map-echart-info {
+            .map-echart-info-item {
+              line-height: rpx(32);
+              font-size: rpx(12);
+              text:nth-of-type(1) {
+                color: #333;
+              }
+              text:nth-of-type(2) {
+                padding-left: rpx(5);
+                color: #4475FD;
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .my-swiper {
+    height: rpx(70);
+    padding: rpx(10) 0 rpx(5);
+  }
+
+  .day-time-swiper-item {
+    justify-content: space-between;
+    box-shadow: 0 rpx(2) rpx(5) 0 rgba(0, 0, 0, 0.07);
+    padding: rpx(15) rpx(13);
+    margin: 0 rpx(5);
+    background-color: #fff;
+    border-radius: rpx(10);
+    .day-time-swiper-item-start {
+      flex: 1;
+      font-size: rpx(10);
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: rpx(6);
+        width: rpx(20);
+        height: rpx(20);
+        border-radius: 50%;
+        color: #fff;
+        background-color: #01C878;
+      }
+      .info {
+        flex: 1;
+        overflow: hidden;
+        & > text {
+          display: block;
+        }
+        text:nth-of-type(1) {
+          margin-bottom: rpx(5);
+          color: #444;
+          font-weight: 600;
+        }
+        text:nth-of-type(2) {
+          color: #999;
+          width: rpx(100);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+    .day-time-swiper-item-end {
+      .icon {
+        background-color: #FF4444;
+      }
+    }
+  }
+  .map-echart-time, .mapTimeRadar {
+    width: 100%;
+    height: rpx(140);
+  }
+  #day-map2 {
+    width: 100%;
+    height: rpx(260);
+  }
+</style>
+<template>
+  <swiper previous-margin="68rpx" next-margin="68rpx" class="my-swiper">
+    <repeat for="{{dayTime}}" index="index" item="item">
+      <swiper-item>
+        <view class="day-time-swiper-item flex">
+          <view class="day-time-swiper-item-start flex">
+            <text class="icon">起</text>
+            <view class="info">
+              <text>2018-01-12 00:00:05</text>
+              <text>北京市了科技管理简单实际付款建设路口了会计师法律纠纷</text>
+            </view>
+          </view>
+          <view
+            class="day-time-swiper-item-start flex day-time-swiper-item-end">
+            <text class="icon">终</text>
+            <view class="info">
+              <text>2018-01-12 00:00:05</text>
+              <text>北京市了科技管理简单实际付款建设路口了会计师法律纠纷</text>
+            </view>
+          </view>
+        </view>
+      </swiper-item>
+    </repeat>
+  </swiper>
+  <view class="trip-day">
+    <view class="day-run">
+      <view class="day-map">
+        <view class="map-echart line-eee flex">
+          <view class="map-echart-time">
+            <mapRadarEcharts class="mapTimeRadar" @ready.user="mapRadar"/>
+          </view>
+          <view class="map-echart-info">
+            <view class="map-echart-info-item">
+              <text>行驶里程：</text>
+              <text>13.21km</text>
+            </view>
+            <view class="map-echart-info-item">
+              <text>行驶时长：</text>
+              <text>00:34:33</text>
+            </view>
+            <view class="map-echart-info-item">
+              <text>平均速度：</text>
+              <text>13.21km/h</text>
+            </view>
+            <view class="map-echart-info-item">
+              <text>最大速度：</text>
+              <text>13.21km/h</text>
+            </view>
+          </view>
+        </view>
+        <view class="scroll-map-title">
+          <scroll-view wx:if="mapTitleLength" scroll-x="true" class="map-line-title"
+                       style="width: auto">
+            <repeat for="{{mapTitleLength}}" key="index" index="index"
+                    item="item">
+              <view class="map-line-title-list">
+                <view class="map-line-title-item flex">
+                  <text style="background-color: {{mapTitleColor[2 * index % 6]}}">
+                    {{mapTitle[2 * index].iconText}}
+                  </text>
+                  <text>{{mapTitle[2 * index].num}}</text>
+                  <text>{{mapTitle[2 * index].name}}</text>
+                </view>
+                <view class="map-line-title-item flex">
+                  <text style="background-color: {{mapTitleColor[(2 * index + 1) % 6]}}">
+                    {{mapTitle[2 * index + 1].iconText}}
+                  </text>
+                  <text>{{mapTitle[2 * index + 1].num}}</text>
+                  <text>{{mapTitle[2 * index + 1].name}}</text>
+                </view>
+              </view>
+            </repeat>
+          </scroll-view>
+        </view>
+        <map id="day-map2" include-points="{{includePoints}}"
+             markers="{{markers}}" polyline="{{polyline}}">
+          <cover-view class="day-map-cover"></cover-view>
+        </map>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import ecCanvas from '../../plugins/ec-canvas/ec-canvas';
+  import * as echarts from '../../plugins/ec-canvas/echarts';
+
+  const MAP_LINE_TITLE_COLOR = [
+    '#FF7D2A',
+    '#ECC600',
+    '#6756FF',
+    '#E33CD8',
+    '#00B6D0',
+    '#FF4444'];
+  export default class TripDayTime extends wepy.page {
+    data = {
+      mapTitleColor: MAP_LINE_TITLE_COLOR,
+      dayTime: 3,
+      mapTitle: [
+        {
+          iconText: '加',
+          num: 2,
+          name: '急加速',
+        },
+        {
+          iconText: '减',
+          num: 2,
+          name: '急减速',
+        },
+        {
+          iconText: '加',
+          num: 2,
+          name: '急加速',
+        },
+        {
+          iconText: '减',
+          num: 2,
+          name: '急减速',
+        },
+        {
+          iconText: '加',
+          num: 2,
+          name: '急加速',
+        },
+        {
+          iconText: '减',
+          num: 2,
+          name: '急减速',
+        },
+        {
+          iconText: '超',
+          num: 2,
+          name: '超速',
+        },
+        {
+          iconText: '变',
+          num: 2,
+          name: '急变道',
+        },
+        {
+          iconText: '转',
+          num: 2,
+          name: '急转弯',
+        },
+        {
+          iconText: '神',
+          num: 2,
+          name: '走神',
+        },
+      ],
+      markers: [
+        {
+          iconPath: '../../assets/trip/icon-start.png',
+          id: 0,
+          latitude: 23.10229,
+          longitude: 113.3245211,
+          width: 21,
+          height: 27,
+          zIndex: 2,
+        },
+        {
+          iconPath: '../../assets/trip/tran.png',
+          fill: '#ff0000',
+          id: 1,
+          longitude: 113.335520,
+          latitude: 23.21229,
+          zIndex: 2,
+          label: {
+            content: '超',
+            color: '#ffffff',
+            padding: 5,
+            anchorY: -17,
+            anchorX: -7,
+            borderRadius: 5,
+            zIndex: 3,
+            fontSize: 10,
+            bgColor: '#ff0000',
+          },
+        },
+        {
+          iconPath: '../../assets/trip/icon-end.png',
+          id: 2,
+          latitude: 23.21229,
+          longitude: 113.324520,
+          width: 21,
+          height: 27,
+          zIndex: 2,
+        },
+      ],
+      includePoints: [
+        {
+          longitude: 113.3245211,
+          latitude: 23.10229,
+        },
+        {
+          longitude: 113.335520,
+          latitude: 23.21229,
+        },
+        {
+          longitude: 113.324520,
+          latitude: 23.21229,
+        },
+      ],
+      polyline: [
+        {
+          points: [
+            {
+              longitude: 113.3245211,
+              latitude: 23.10229,
+            },
+            {
+              longitude: 113.335520,
+              latitude: 23.21229,
+            },
+            {
+              longitude: 113.324520,
+              latitude: 23.21229,
+            },
+          ],
+          color: '#FF0000',
+          width: 2,
+          dottedLine: false,
+        },
+      ],
+      year: 0,
+      month: 0,
+      day: 0,
+      echartsRadarOption: {
+        radar: {
+          name: {
+            textStyle: {
+              color: '#bbb',
+            },
+          },
+          radius: '70%',
+          nameGap: 2,
+          splitNumber: 1,
+          splitLine: {
+            lineStyle: {
+              color: '#bbb',
+            },
+          },
+          indicator: [
+            {name: '速度', max: 100},
+            {name: '减速', max: 100},
+            {name: '里程', max: 100},
+            {name: '环境', max: 100},
+            {name: '疲劳', max: 100},
+            {name: '时段', max: 100},
+            {name: '加速', max: 100},
+          ],
+        },
+        series: [
+          {
+            name: '',
+            type: 'radar',
+            symbol: 'none',
+            areaStyle: {
+              color: '#E3EBFF',
+            },
+            lineStyle: {
+              color: '#6790FD',
+              type: 'dotted',
+            },
+            data: [
+              {
+                value: [43, 10, 13, 28, 35, 5, 19],
+                name: '',
+              },
+            ],
+          }
+        ],
+      },
+    };
+
+    computed = {
+      mapTitleLength() {
+        return Math.ceil(this.mapTitle.length / 2);
+      },
+    };
+
+    components = {
+      mapRadarEcharts: ecCanvas
+    };
+
+    methods = {
+      mapRadar(canvas, width, height, callback) {
+        const chart = echarts.init(canvas, null, {
+          width: width,
+          height: height,
+        });
+        canvas.setChart(chart);
+        callback(canvas);
+        let scoreOpt = this.echartsRadarOption;
+        chart.setOption(scoreOpt);
+        return chart;
+      }
+    };
+
+    events = {
+    };
+
+    onUnload() {
+      this.$broadcast('destroy-echarts');
+    }
+
+    onLoad(option) {
+      // console.log(option);
+      this.year = option.y.split('-')[0];
+      this.month = option.y.split('-')[1];
+      this.day = option.y.split('-')[2];
+      wepy.setNavigationBarTitle({
+        title: `${this.year}年${this.month}月${this.day}日分段行程`,
+      });
+    }
+  }
+</script>

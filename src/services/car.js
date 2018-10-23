@@ -17,6 +17,11 @@ class CarService {
     return result.list;
   }
 
+  async getSearchList (params) {
+    let result = await ajaxProvider.request('getSearchList', params);
+    return result;
+  }
+
   async getDetail() {
 
   }

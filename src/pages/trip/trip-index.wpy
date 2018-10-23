@@ -1,0 +1,309 @@
+<style lang="less">
+  .function () {
+    .rpx (@x) {
+      return: @x * 2rpx;
+    }
+  }
+
+  .trip {
+    .operations {
+      padding: rpx(10) 0;
+    }
+    .year-top-btn {
+      padding-top: rpx(10);
+      justify-content: space-between;
+      align-items: center;
+      .year-btn {
+        width: rpx(86);
+        height: rpx(40);
+        border-radius: rpx(5);
+        background: #f4f4f4;
+        line-height: rpx(40);
+        text-align: center;
+      }
+      .year-text {
+        font-weight: 600;
+        font-size: rpx(20);
+        color: #333;
+      }
+    }
+    .year-list {
+      position: relative;
+      z-index: 1;
+      .line {
+        position: absolute;
+        left: rpx(24);
+        width: 2px;
+        background: #ECF1FE;
+        z-index: -1;
+      }
+      .year-list-item {
+        align-items: center;
+        height: rpx(70);
+        &:nth-last-child(1) {
+          .year-list-item-content {
+            border-bottom: none;
+          }
+        }
+        .year-list-item-month {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: rpx(48);
+          height: rpx(48);
+          border-radius: 50%;
+          background: #ECF1FE;
+          color: #4475FD;
+          font-size: rpx(20);
+          font-weight: 600;
+          margin-right: rpx(11);
+          .month-num {
+          }
+          .month {
+            padding-top: rpx(7);
+            font-weight: normal;
+            font-size: rpx(10);
+          }
+        }
+        .year-list-item-content {
+          flex: 1;
+          height: 100%;
+          border-bottom: 1px solid #eee;
+          .just-right {
+            justify-content: flex-end;
+          }
+          .col-3 {
+            flex: 0 0 28%;
+            align-items: center;
+            box-sizing: border-box;
+            padding-right: rpx(10);
+          }
+          .year-icon {
+            margin-right: rpx(10);
+          }
+          .year-icon-01 {
+            width: rpx(20);
+            height: rpx(19);
+          }
+          .year-icon-02 {
+            width: rpx(15);
+            height: rpx(22);
+          }
+          .year-icon-03 {
+            width: rpx(16);
+            height: rpx(20);
+          }
+          .year-icon-text {
+            text {
+              display: block;
+            }
+            text:nth-of-type(1) {
+              line-height: rpx(18);
+              color: #333;
+              font-weight: 600;
+              font-size: rpx(13);
+            }
+            text:nth-of-type(2) {
+              line-height: rpx(17);
+              color: #999;
+              font-size: rpx(12);
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="trip">
+    <view class="part m-top-10">
+      <text class="part-title">运营概况</text>
+      <view class="operations">
+        <operationSituation :operations.sync="operations"/>
+      </view>
+    </view>
+    <view class="part">
+      <text class="part-title">行程统计</text>
+      <view class="year-top-btn flex">
+        <span class="year-btn" @tap="prevYear"><i
+          class="foton-ui arr-icon left {{monthesIndex === 0 && 'opacity2'}}"></i></span>
+        <text class="year-text">{{monthes[monthesIndex].year}}年</text>
+        <span class="year-btn" @tap="nextYear"><i class="foton-ui arr-icon right {{monthesIndex + 1 === monthes.length && 'opacity2'}}"></i></span>
+      </view>
+      <view class="year-list">
+        <text class="line" wx:if="{{monthes[monthesIndex].date.length > 1}}"
+              style="height:{{monthes[monthesIndex].date.length * 140 - 100}}rpx; top: 50rpx"></text>
+        <repeat for="{{monthes[monthesIndex].date}}" key="index" index="index" item="item">
+          <view class="year-list-item flex" @tap="navigatorToMonth({{item.calendar}})">
+            <view class="year-list-item-month">
+              <text class="month-num">{{(monthes[monthesIndex].date.length - index) > 9 ?
+                (monthes[monthesIndex].date.length - index) : '0' + (monthes[monthesIndex].date.length - index)}}
+              </text>
+              <text class="month">月</text>
+            </view>
+            <view class="year-list-item-content flex">
+              <view class="col-3 flex">
+                <image class="year-icon year-icon-01"
+                       src="../../assets/trip/statistics-01.png"></image>
+                <view class="year-icon-text">
+                  <text>{{item.onLine}}天</text>
+                  <text>在线</text>
+                </view>
+              </view>
+              <view class="col-3 flex">
+                <image class="year-icon year-icon-02"
+                       src="../../assets/trip/statistics-02.png"></image>
+                <view class="year-icon-text">
+                  <text>{{item.mileage}}km</text>
+                  <text>里程</text>
+                </view>
+              </view>
+              <view class="col-3 flex">
+                <image class="year-icon year-icon-03"
+                       src="../../assets/trip/statistics-03.png"></image>
+                <view class="year-icon-text">
+                  <text>{{item.oil}}L</text>
+                  <text>油耗</text>
+                </view>
+              </view>
+              <text class="foton-ui arr-icon right opacity2 just-right"></text>
+            </view>
+          </view>
+        </repeat>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import OperationSituation from '../../components/trip/operation-situation';
+  import tripService from '../../services/trip';
+
+  export default class TripIndex extends wepy.component {
+
+    data = {
+      operations: [
+        {
+          img: '../../assets/trip/oper-icon-01.png',
+          title: '累计里程',
+          val: 0,
+          unit: 'km',
+        },
+        {
+          img: '../../assets/trip/oper-icon-02.png',
+          title: '累计时长',
+          val: 0,
+          unit: 'h',
+        },
+        {
+          img: '../../assets/trip/oper-icon-03.png',
+          title: '累计行驶',
+          val: 0,
+          unit: '天',
+        },
+        {
+          img: '../../assets/trip/oper-icon-04.png',
+          title: '监控天数',
+          val: 0,
+          unit: '天',
+        },
+        {
+          img: '../../assets/trip/oper-icon-05.png',
+          title: '平均速度',
+          val: 0,
+          unit: 'km/h',
+        },
+        {
+          img: '../../assets/trip/oper-icon-06.png',
+          title: '利用率',
+          val: 0,
+          unit: '%',
+        },
+      ],
+      monthesIndex: 0,
+      monthes: [
+        // {
+        //   year: '2018',
+        //   date: [
+        //     {
+        //       calendar: '2018-01',
+        //       onLine: 22,
+        //       mileage: 22,
+        //       oil: 22
+        //     },
+        //     {
+        //       calendar: '2018-02',
+        //       onLine: 22,
+        //       mileage: 22,
+        //       oil: 22
+        //     },
+        //     {
+        //       calendar: '2018-03',
+        //       onLine: 22,
+        //       mileage: 22,
+        //       oil: 22
+        //     }
+        //   ]
+        // }
+      ],
+    };
+
+    methods = {
+      navigatorToMonth (year) {
+        // console.log(id);
+        wepy.navigateTo({
+          url: `./trip/trip-month?y=${year}`
+        });
+      },
+      prevYear() {
+        if (this.monthesIndex > 0) {
+          this.monthesIndex--;
+        } else {
+          return false;
+        }
+      },
+      nextYear() {
+        if (this.monthesIndex < (this.monthes.length - 1)) {
+          this.monthesIndex++;
+        } else {
+          return false;
+        }
+      }
+    };
+
+    onLoad(option) {
+    };
+
+    events = {
+      'getTripIndex': async () => {
+        wepy.showLoading({
+          title: '加载中...'
+        });
+        let {data, code} = await tripService.getTripIndex({
+          vin: '123'
+        });
+        wepy.hideLoading();
+        if (code === 1) {
+          this.monthes = data.statistics.map(ele => {
+            return {
+              date: ele.date.reverse(),
+              year: ele.year
+            };
+          });
+          this.operations[0].val = data.operations.mileage;
+          this.operations[1].val = data.operations.time;
+          this.operations[2].val = data.operations.dirveDay;
+          this.operations[3].val = data.operations.runDay;
+          this.operations[4].val = data.operations.avgSpeed;
+          this.operations[5].val = data.operations.loss;
+          this.$apply();
+        }
+      }
+    };
+
+    components = {
+      operationSituation: OperationSituation,
+    };
+  }
+</script>

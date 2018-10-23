@@ -1,0 +1,118 @@
+<style lang="less">
+  @import "../../style/global.less";
+  .container {
+    background-color: #F8F8F8;
+    color: #000;
+    .weui-cells,.weui-cell {
+      padding: 0;
+    }
+    .title {
+      height: 80rpx;
+      line-height: 80rpx;
+      text-indent: 54rpx;
+      font-size: 28rpx;
+      color: @c999;
+    }
+    textarea {
+      box-sizing: border-box;
+      padding: 24rpx;
+      height: 560rpx;
+      text-indent: 30rpx;
+    }
+  }
+</style>
+
+
+<template>
+  <view class="container">
+    <view class="title">感谢您的支持与建议</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">
+          <textarea class="weui-textarea" placeholder="请输入不少于10个字的描述" @input="onInputSuggestInfo"/>
+          <!--<view class="weui-textarea-counter">0/200</view>-->
+        </view>
+      </view>
+    </view>
+    <view class="weui-btn-area">
+      <button class="weui-btn btn-blue" @tap="submitSuggest">提交建议</button>
+    </view>
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import profileService from '../../services/profile';
+  import toast from '../../lib/toast';
+
+  @connect({
+    profile (state) {
+      return state.profile.user;
+    }
+  })
+
+  export default class ProfileSuggest extends wepy.page {
+
+    config = {
+      navigationBarTitleText: '意见设置'
+    };
+    components = {
+
+    };
+
+    mixins = [];
+
+    data = {
+      suggestInfo: ''
+    };
+
+    methods = {
+      // suggestSend () {
+      //   this.tipsFlag = true;
+      //   setTimeout(() => {
+      //     this.tipsFlag = false;
+      //     this.$apply();
+      //   }, 3000);
+      // }
+
+      onInputSuggestInfo (e) {
+        this.suggestInfo = e.detail.value.trim();
+      },
+
+      async submitSuggest () {
+        if (this.suggestInfo.length === 0) {
+          return;
+        }
+        wepy.showLoading({
+          title: '保存中'
+        });
+        let result = await profileService.submitSuggest(this.suggestInfo);
+        toast.showByResult(result);
+        wepy.hideLoading();
+        this.suggestInfo = '';
+        this.$apply();
+      },
+    };
+
+    events = {
+    };
+
+    onLoad () {
+      console.info('onLoad');
+    }
+
+    onHide() {
+      console.info('onHide');
+    }
+
+    onShow() {
+      console.info('onShow');
+    }
+
+    onUnLoad() {
+      console.info('onUnLoad');
+    }
+  }
+</script>

@@ -1,0 +1,82 @@
+<style lang="less">
+  @blue: #4475FD;
+  .function () {
+    .rpx (@x) {
+      return: @x * 2rpx;
+    }
+  }
+
+  .operation {
+    flex-flow: row wrap;
+    .operation-item {
+      flex: 0 0 50%;
+      margin-bottom: rpx(10);
+      box-sizing: border-box;
+      &:nth-of-type(odd) {
+        padding-right: rpx(4.5);
+      }
+      &:nth-of-type(even) {
+        padding-left: rpx(4.5);
+      }
+    }
+    .operation-item-con {
+      padding: rpx(10) rpx(12) rpx(8);
+      align-items: center;
+      border-radius: rpx(10);
+      background: #F8F8F8;
+      .operation-icon {
+        flex: 0 0 rpx(33);
+        margin-right: rpx(13);
+        height: rpx(32);
+        background-size: 100% 100%;
+      }
+      .operation-text {
+        text {
+          display: block;
+        }
+        .operation-text-kw {
+          font-size: rpx(13);
+          line-height: rpx(18);
+          color: #333;
+        }
+        .operation-text-km {
+          font-size: rpx(16);
+          line-height: rpx(22);
+          color: @blue;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="operation flex" wx:if="{{operations}}">
+    <repeat for="{{operations}}" key="index" index="index" item="item">
+      <view class="operation-item">
+        <view class="flex operation-item-con">
+          <view class="operation-icon"
+                style="background-image: url({{item.img}})"></view>
+          <view class="operation-text">
+            <text class="operation-text-kw">{{item.title}}</text>
+            <text class="operation-text-km">{{item.val}}{{item.unit ? item.unit
+              : ''}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class OperationSituation extends wepy.component {
+    props = {
+      operations: {
+        type: Array,
+        default: [],
+      },
+    };
+  }
+</script>

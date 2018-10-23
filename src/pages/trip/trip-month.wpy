@@ -1,0 +1,345 @@
+<style lang="less">
+  @import "../../style/global.less";
+  .function () {
+    .rpx (@x) {
+      return: @x * 2rpx;
+    }
+  }
+
+  .trip-month-part {
+    padding-bottom: rpx(10);
+  }
+
+  .trip-month {
+    padding: 0 rpx(8);
+    .operations {
+      padding: rpx(10) 0;
+    }
+    .part-main {
+      flex-direction: column;
+    }
+    .title {
+      color: #333;
+      font-size: rpx(14);
+      text-align: center;
+      text {
+        color: @normal;
+      }
+    }
+    .mapchart {
+      width: 100%;
+      height: rpx(240);
+    }
+    .cities {
+      flex-wrap: wrap;
+      justify-content: space-around;
+      & > .city {
+        width: 33%;
+        justify-content: flex-start;
+        margin-bottom: rpx(13);
+        .num {
+          width: rpx(28);
+          height: rpx(17);
+          line-height: rpx(17);
+          text-align: center;
+          color: #c1c1c1;
+          font-size: rpx(13);
+          background-color: #f2f2f2;
+          border-radius: rpx(10);
+          &.firstline {
+            color: @normal;
+            background-color: rgba(68, 117, 253, 0.1);
+          }
+        }
+        .name {
+          margin-left: rpx(10);
+          color: #333;
+          font-size: rpx(14);
+        }
+      }
+    }
+    .month {
+      margin-top: rpx(10);
+      padding: rpx(9) rpx(9) rpx(4);
+      border-radius: rpx(10);
+      background: #f8f8f8;
+    }
+    .headbox {
+      margin-bottom: rpx(16);
+      .headdate {
+        flex: 0 0 14.2%;
+        text-align: center;
+        color: #999;
+        font-size: rpx(11);
+      }
+    }
+    .days {
+      flex-wrap: wrap;
+      .day {
+        position: relative;
+        flex: 0 0 14.2%;
+        text-align: center;
+        margin-bottom: rpx(10);
+        color: #333;
+        font-size: rpx(14);
+        line-height: rpx(20);
+        &.run {
+          &:before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: rpx(-5);
+            width: rpx(5);
+            height: rpx(5);
+            background: #4475FD;
+            border-radius: 50%;
+            transform: translateX(-50%);
+          }
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="trip-month">
+    <view class="part m-top-10">
+      <text class="part-title">运营概况</text>
+      <view class="operations">
+        <operationSituation :operations.sync="operations"/>
+      </view>
+    </view>
+    <view class="part">
+      <text class="part-title">车辆足迹</text>
+      <view class="part-main">
+        <view class="title">车辆经过<text>{{beenPlace.province}}</text>个省份、<text>{{beenPlace.cities}}</text>个城市</view>
+        <view class="title">超过<text>{{beenPlace.raty}}</text>的车辆</view>
+        <map-chart class="mapchart" @ready.user="onChartMapReady"></map-chart>
+        <view class="cities flex">
+          <repeat for="{{citiesOrder}}" key="index" index="index" item="item">
+            <view class="city flex">
+              <view class="num {{index < 3 ? 'firstline' : ''}}">
+                <text wx:if="{{index < 9}}">0</text>
+                <text>{{(index + 1) + '.'}}</text>
+              </view>
+              <view class="name">{{item}}</view>
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </view>
+    <view class="part trip-month-part">
+      <text class="part-title">运营日历</text>
+      <view class="month">
+        <view class="headbox flex">
+          <view class="headdate">日</view>
+          <view class="headdate">一</view>
+          <view class="headdate">二</view>
+          <view class="headdate">三</view>
+          <view class="headdate">四</view>
+          <view class="headdate">五</view>
+          <view class="headdate">六</view>
+        </view>
+        <view class="days flex">
+          <repeat for="{{days + monthStartDate}}" key="index" index="index"
+                  item="date">
+            <view class="day {{index >= monthStartDate ? 'run' : ''}}"
+                  @tap="navigatorToDay({{index - monthStartDate + 1}})">
+              <text wx:if="{{index >= monthStartDate}}">{{index - monthStartDate + 1}}</text>
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import ecCanvas from '../../plugins/ec-canvas/ec-canvas';
+  import * as echarts from '../../plugins/ec-canvas/echarts';
+  import { geoJson } from '../../plugins/ec-canvas/china';
+  import OperationSituation from '../../components/trip/operation-situation';
+  import monthDay from '../../lib/month';
+  import tripService from '../../services/trip';
+
+  export default class TripMonth extends wepy.page {
+    data = {
+      year: 0,
+      month: 0,
+      operations: [
+        {
+          img: '../../assets/trip/oper-icon-01.png',
+          title: '本月里程',
+          val: 0,
+          unit: 'km',
+        },
+        {
+          img: '../../assets/trip/oper-icon-02.png',
+          title: '本月时长',
+          val: 0,
+          unit: 'h',
+        },
+        {
+          img: '../../assets/trip/oper-icon-03.png',
+          title: '本月行驶',
+          val: 0,
+          unit: '天',
+        },
+        {
+          img: '../../assets/trip/oper-icon-04.png',
+          title: '运营天数',
+          val: 0,
+          unit: '天',
+        },
+        {
+          img: '../../assets/trip/oper-icon-05.png',
+          title: '平均速度',
+          val: 0,
+          unit: 'km/h',
+        },
+        {
+          img: '../../assets/trip/oper-icon-07.png',
+          title: '车辆损耗',
+          val: 0,
+          unit: '%',
+        },
+      ],
+      days: [],
+      monthStartDate: 0,
+      beenPlace: {},
+      citiesOrder: []
+    };
+    components = {
+      operationSituation: OperationSituation,
+      'map-chart': ecCanvas,
+    };
+
+    methods = {
+      navigatorToDay (day) {
+        if (day > 0) {
+          day = day[1] ? day : '0' + day;
+          wepy.navigateTo({
+            url: `./trip-day?y=${this.year}-${this.month}-${day}`
+          });
+        }
+      },
+      async onChartMapReady(canvas, width, height, callback) {
+        let {data, code} = await tripService.getTripMonth({
+          vin: '132132',
+          date: `${this.year}-${this.month}`
+        });
+        if (code === 1) {
+          this.operations[0].val = data.operations.mileage;
+          this.operations[1].val = data.operations.time;
+          this.operations[2].val = data.operations.dirveDay;
+          this.operations[3].val = data.operations.runDay;
+          this.operations[4].val = data.operations.avgSpeed;
+          this.operations[5].val = data.operations.loss;
+          this.beenPlace = data.beenPlace;   // 经过的省份、城市、比例
+          this.citiesOrder = data.citiesOrder;   // 经过的城市
+          this.$apply();
+          this.chartMap = echarts.init(canvas, null, {
+            width: width,
+            height: height
+          });
+          canvas.setChart(this.chartMap);
+          callback(this.chartMap);
+          this.bindChartMap(data.footprint);
+        }
+      }
+    };
+
+    onLoad(option) {
+      let year = option.y.split('-')[0];
+      let month = option.y.split('-')[1];
+      wepy.setNavigationBarTitle({
+        title: option.y.replace('-', '年') + '月行程',
+      });
+      this.year = year;
+      this.month = month;
+      this.getMonth(this.year, this.month);
+    }
+
+    onUnload() {
+      this.$broadcast('destroy-echarts');
+    }
+
+    bindChartMap(footprint) {
+      let seriesData = this.convertProvinceName(this.convertArrJsonName(footprint));
+      seriesData.sort((a, b) => b.value - a.value);
+      let markPointData = seriesData.slice(0, 3);
+      let maxValue = seriesData[0].value;
+      markPointData = markPointData.map(v => {
+        v.coord = geoJson.features.find(x => x.properties.name === v.name).properties.cp;
+        return v;
+      });
+      let option = {
+        backgroundColor: '#fff',
+        tooltip: {
+          show: false
+        },
+        visualMap: {
+          show: false,
+          min: 0,
+          max: maxValue,
+          type: 'continuous',
+          inRange: {
+            color: ['#DAE4FF', '#4475FD']
+          }
+        },
+        series: [{
+          type: 'map',
+          map: 'china',
+          zoom: 1,
+          itemStyle: {
+            normal: {
+              areaColor: '#DAE4FF',
+              borderWidth: 0
+            },
+            emphasis: {
+              areaColor: '#DAE4FF'
+            }
+          },
+          data: seriesData,
+          markPoint: {
+            label: {
+              show: true,
+              position: 'right',
+              formatter: '{b}',
+              fontSize: 10,
+              color: '#333333',
+              padding: [2, 5],
+              backgroundColor: '#fff',
+              borderRadius: 8
+            },
+            symbol: 'circle',
+            symbolSize: 6,
+            itemStyle: {
+              color: 'blue'
+            },
+            data: markPointData
+          }
+        }]
+      };
+      this.chartMap.setOption(option);
+    }
+
+    // 获取月份天数
+    getMonth(year, month) {
+      let {monthStartDate, days} = monthDay(year, month);
+      // console.log(monthStartDate, days);
+      this.monthStartDate = monthStartDate;
+      this.days = days;
+    }
+
+    // 改字段名
+    convertArrJsonName (json, oldName = 'province', newName = 'name') {
+      let reg = new RegExp(oldName, 'ig');
+      return JSON.parse(JSON.stringify(json).replace(reg, newName));
+    }
+    // 改省份名
+    convertProvinceName (data) {
+      return JSON.parse(JSON.stringify(data).replace(/[省|市|自治区|壮族自治区|回族自治区|维吾尔自治区|特别行政区]/g, ''));
+    }
+  }
+</script>

@@ -1,0 +1,189 @@
+<style lang="less">
+  @import "../../style/global.less";
+  .container {
+    background-color: #F8F8F8;
+    color: #000;
+    .weui-cells {
+      padding: 0 46rpx;
+    }
+    .weui-cell__ft_in-access {
+      padding-right: 46rpx;
+    }
+    .user-box {
+      margin-top: 20rpx;
+      font-size: 28rpx;
+      box-shadow: 0 4rpx 10rpx rgba(0,0,0,0.07);
+      .head-img {
+        padding: 20rpx 8rpx 18rpx;
+        image {
+          background-color: #fff;
+          width: 160rpx;
+          height: 160rpx;
+          border-radius: 50%;
+          vertical-align: middle;
+        }
+      }
+      .user-name {
+        padding: 50rpx 8rpx 54rpx;
+        .weui-cell__ft {
+          color: @c999;
+        }
+      }
+    }
+    .modal {
+      & > view {
+        padding: 60rpx 40rpx;
+        box-sizing: border-box;
+        i.close {
+          position: absolute;
+          top: 20rpx;
+          right: 20rpx;
+        }
+        textarea {
+          margin-bottom: 40rpx;
+          padding: 20rpx;
+          height: 300rpx;
+          width: auto;
+          background-color: #F5F5F5;
+        }
+      }
+    }
+  }
+</style>
+
+
+<template>
+  <view class="container">
+    <view class="weui-cells weui-cells_after-title user-box">
+      <view class="weui-cell weui-cell_access head-img" hover-class="weui-cell_active"  @tap="open">
+        <view class="weui-cell__bd">头像</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">
+          <image src="{{ profile.headImageUrl }}"></image>
+        </view>
+      </view>
+      <view class="weui-cell weui-cell_access user-name" @tap="showDialog">
+        <view class="weui-cell__bd">用户名</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{ profile.userName }}</view>
+      </view>
+    </view>
+    <view class="modal" hidden="{{ !isShowAddUserNameDialog }}">
+      <view>
+        <i class="foton-ui close" @tap="hideDialog"></i>
+        <textarea placeholder="请输入要修改的用户名" @input="onInputUserName"/>
+        <button class="btn-blue" @tap="updateUserName">确定</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import profileService from '../../services/profile';
+  import toast from '../../lib/toast';
+
+  @connect({
+    profile (state) {
+      return state.profile.user;
+    }
+  })
+
+  export default class ProfileUserInformation extends wepy.page {
+
+    config = {
+      navigationBarTitleText: '个人信息'
+    };
+    components = {
+
+    };
+
+    mixins = [];
+
+    data = {
+      isShowAddUserNameDialog: false,
+      userName: ''
+    };
+
+    methods = {
+      async open () {
+        let res = await wepy.showActionSheet({
+          itemList: ['拍照', '从相册上传']
+        });
+        if (!res.cancel) {
+          console.log(res.tapIndex);
+          this.chooseImage(res.tapIndex);
+        }
+      },
+
+      hideDialog () {
+        this.hideAddUserNameDialog();
+      },
+
+      showDialog () {
+        this.showAddUserNameDialog();
+      },
+
+      onInputUserName (e) {
+        this.userName = e.detail.value.trim();
+      },
+
+      async updateUserName () {
+        if (this.userName.length === 0) {
+          return;
+        }
+        wepy.showLoading({
+          title: '保存中'
+        });
+        let result = await profileService.updateUserName(this.userName);
+        toast.showByResult(result);
+        if (result.code === 200) {
+          this.hideAddUserNameDialog();
+        }
+        wepy.hideLoading();
+        this.$apply();
+      }
+    };
+
+    events = {
+    };
+
+    hideAddUserNameDialog () {
+      this.isShowAddUserNameDialog = false;
+    }
+
+    showAddUserNameDialog () {
+      this.isShowAddUserNameDialog = true;
+    }
+
+    async chooseImage(index) {
+      let type = '';
+      if (index === 0) {
+        type = '[camera]';
+      } else {
+        type = '[album]';
+      }
+      let chooseResult = await wepy.chooseImage({
+        count: 1,
+        sizeType: ['compressed'],
+        sourceType: type
+      });
+
+      let file = chooseResult.tempFiles[0];
+      let path = file.path;
+      if (file.size >= 5 * 1024 * 1024) {
+        // return toastProvider.error('需小于5M');
+      }
+      if (path.length === 0) {
+        return;
+      }
+      wepy.showLoading({
+        title: '上传中'
+      });
+      let result = await profileService.uploadFile(path);
+      wepy.hideLoading();
+      toast.showByResult(result);
+      this.$apply();
+    }
+  }
+</script>
