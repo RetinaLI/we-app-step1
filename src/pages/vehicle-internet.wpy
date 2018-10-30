@@ -70,14 +70,15 @@
     background: #fff;
     display: block;
     .wrap {
-      margin: 24rpx;
-      margin-top: 16rpx;
+      margin: 0 24rpx 0;
       display: flex;
       flex-direction: row;
       border-bottom: 1px solid #eee;
+      padding-top: 16rpx;
       .car-img {
         width: 160rpx;
         margin-right: 15rpx;
+        margin-top: 14rpx;
         .icon {
           width: 160rpx;
           height: 120rpx;
@@ -113,9 +114,11 @@
         .brand {
           font-size: 24rpx;
           line-height: 34rpx;
+          margin-bottom: 16rpx;
         }
         .last-line {
           font-size: 24rpx;
+          margin-bottom: 16rpx;
           .pos {
             display: inline-block;
             float: left;
@@ -127,15 +130,17 @@
             line-height: 34rpx;
             .pos-icon{
               display: inline-block;
-              width: 21rpx;
-              height: 27rpx;
+              width: 22rpx;
+              height: 28rpx;
               vertical-align: top;
+              padding-top:2rpx;
             }
           }
           .time {
-            float: left;
+            float: right;
             color: #bbb;
             line-height: 34rpx;
+            margin-right: 76rpx;
           }
         }
       }
@@ -152,6 +157,37 @@
         border-right: 2px solid #000;
         transform: translateX(-3px) translateY(-20rpx) rotate(45deg);
       }
+    }
+  }
+  .now-loading {
+    height: 60rpx;
+    line-height: 60rpx;
+    text-align: center;
+    opacity: .8;
+    font-size: 24rpx;
+    >.refresh-pull-arrow{
+      width: 20px;
+      height: 20px;
+      visibility: visible;
+      background: no-repeat center;
+      // background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTIzMzMzMjQ5ODAwIiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI4OTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTg3My42IDQxOS4ybC0zNTUuMi0zNjEuNmMtOS42LTkuNi0yMi40LTkuNi0zMiAwbC0zNTUuMiAzNjhjLTkuNiA5LjYtOS42IDIyLjQgMCAzMiA5LjYgOS42IDIyLjQgOS42IDMyIDBsMzE2LjgtMzI5LjYgMCA4MjguOGMwIDEyLjggOS42IDIyLjQgMjIuNCAyMi40czIyLjQtOS42IDIyLjQtMjIuNGwwLTgyMi40IDMxMC40IDMxNi44YzkuNiA5LjYgMjIuNCA5LjYgMzIgMEM4ODMuMiA0NDEuNiA4ODMuMiA0MjUuNiA4NzMuNiA0MTkuMnoiIHAtaWQ9IjI4OTMiPjwvcGF0aD48L3N2Zz4=');
+      background-size: cover;
+      z-index: 10;
+      -webkit-transform: rotate(0deg) translate3d(0, 0, 0);
+      transform: rotate(0deg) translate3d(0, 0, 0);
+      -webkit-transition-duration: 300ms;
+      transition-duration: 300ms;
+      display: inline-block;
+      vertical-align: middle;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iciIgd2lkdGg9JzEyMHB4JyBoZWlnaHQ9JzEyMHB4JyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJub25lIiBjbGFzcz0iYmsiPjwvcmVjdD4KICAgIDxyZWN0IHg9JzQ2LjUnIHk9JzQwJyB3aWR0aD0nNycgaGVpZ2h0PScyMCcgcng9JzUnIHJ5PSc1JyBmaWxsPScjRTlFOUU5JwogICAgICAgICAgdHJhbnNmb3JtPSdyb3RhdGUoMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSc+CiAgICA8L3JlY3Q+CiAgICA8cmVjdCB4PSc0Ni41JyB5PSc0MCcgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHJ4PSc1JyByeT0nNScgZmlsbD0nIzk4OTY5NycKICAgICAgICAgIHRyYW5zZm9ybT0ncm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApJz4KICAgICAgICAgICAgICAgICByZXBlYXRDb3VudD0naW5kZWZpbml0ZScvPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyM5Qjk5OUEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSg2MCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSc+CiAgICAgICAgICAgICAgICAgcmVwZWF0Q291bnQ9J2luZGVmaW5pdGUnLz4KICAgIDwvcmVjdD4KICAgIDxyZWN0IHg9JzQ2LjUnIHk9JzQwJyB3aWR0aD0nNycgaGVpZ2h0PScyMCcgcng9JzUnIHJ5PSc1JyBmaWxsPScjQTNBMUEyJwogICAgICAgICAgdHJhbnNmb3JtPSdyb3RhdGUoOTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNBQkE5QUEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxMjAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNCMkIyQjInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNCQUI4QjknCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxODAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNDMkMwQzEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyMTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNDQkNCQ0InCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNEMkQyRDInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyNzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNEQURBREEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgzMDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNFMkUyRTInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0Pgo8L3N2Zz4=');
+      -webkit-animation: rotate 1s 0s linear infinite;
+      animation: rotate 1s 0s linear infinite;
+      position:relative;
+      margin-left:20rpx;
+      opacity:1;
+      top:6rpx;
+      left:0;
+
     }
   }
 }
@@ -205,6 +241,7 @@
     width: 100%;
     background: #fff;
     overflow: hidden;
+    z-index: 21;
     .back {
       display: inline-block;
       width: 70rpx;
@@ -384,7 +421,7 @@
   width: 100%;
   height: 30px;
   position: absolute;
-  top: -50px;
+  top: -74rpx;
   left: 0;
   padding: 8px 0;
 }
@@ -405,6 +442,7 @@
   transform: rotate(0deg) translate3d(0, 0, 0);
   -webkit-transition-duration: 300ms;
   transition-duration: 300ms;
+  opacity: .5;
 }
 .refresh-content.refresh-pull-down .refresh-pull-arrow {
   -webkit-transform: rotate(0deg) translate3d(0,0,0);
@@ -429,11 +467,29 @@
 .repeat{
   margin-top: 20px !important;
 }
+
+.noData{
+  .no{
+    padding-top: 200rpx;
+    font-size: 30rpx;
+    text-align: center;
+  }
+
+}
+.first-load{
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  height: 30px;
+  .refresh-pull-arrow{
+    opacity: 1;
+  }
+}
 </style>
 
 <template>
   <view class="container">
-    <view class="weui-flex search-box" wx:if="{{!searchSwitch}}">
+    <view class="weui-flex search-box" >
       <!-- <view class="weui-flex__item">
         <view class="choose-item" @tap="brandChoose">品牌<view class="{{arrname}}"></view></view>
       </view>
@@ -446,24 +502,16 @@
           <span class="label types">{{ multiArray[1][multiIndex[1]] }}<span class="arrow"></span></span>
         </label>
       </picker>
-      <view class="search">
-        <view class="placeholder" @tap="searchBtn">
+      <navigator url="search" class="search">
+        <view class="placeholder">
           <image src="../assets/cars/search@2x.png" class='search-icon'></image>
         </view>
-      </view>
+      </navigator>
     </view>
-
-    <view wx:if="{{brandswitch}}" class="show-choose">
-      <view class="brand-choose">
-        <repeat for="{{ brands }}" key="index" index="index" item="item">
-          <view>
-            <view class="name">{{ item}}</view>
-          </view>
-        </repeat>
-      </view>
+    <view wx:if="{{!showList }}" style="height:{{windowHeight}}px;" class="noData">
+      <view class="no">暂无数据</view>
     </view>
-
-    <view wx:if="{{!searchBarShow}}" class="car-list">
+    <view wx:if="{{showList }}" class="car-list">
       <scroll-view class="scroll-view" style="height:{{windowHeight}}px;" scroll-y="true" scroll-with-animation="true" bindscrolltolower="onReachBottom" catchscroll="scroll" >
         <view bind:scrollTop="scrollTop" class="refresh-content refresh-container {{className}}"
           bind:touchstart="touchstart"
@@ -472,51 +520,44 @@
           animation="{{animationData}}">
           <view class="refresh-load">
             <view class="refresh-pull-arrow"></view>
-            <view style="margin-top:45px;">
-              <repeat for="{{ list }}" key="index" index="index" item="item">
-                <li>
-                  <navigator url="car-detail?vin={{item.framenum}}">
-                    <view class="wrap">
-                      <view class='car-img'>
-                        <image src="../assets/cars/shidai@2x.png" class='icon'></image>
-                      </view>
-                      <view class='data-body'>
-                        <view>
-                          <text class="vin">{{ item.framenum}}</text> <text wx:if="{{item.lpn}}" class="lpn">{{ item.lpn }}</text>
-                        </view>
-                        <view class="brand">{{ item.carBrandName}}-{{item.carTypeName}}</view>
-                        <view class="last-line">
-                          <view class="pos"> <image class="pos-icon" src="../assets/cars/location.png"></image> {{ item.LOCATION_INFO}}</view>
-                          <text class="time">{{ item.sendTime}}</text>
-                        </view>
-                      </view>
-                      <view class="arr-right"></view>
+          </view>
+          <view>
+            <repeat  for="{{ carsList }}" key="index" index="index" item="item">
+              <li>
+                <navigator url="car-detail?carId={{item.carId}}&did={{item.did}}">
+                  <view class="wrap">
+                    <view class='car-img'>
+                      <image src="../assets/cars/shidai@2x.png" class='icon'></image>
                     </view>
-                  </navigator>
-                </li>
-              </repeat>
-            </view>
+                    <view class='data-body'>
+                      <view>
+                        <text class="vin">{{ item.framenum}}</text> <text wx:if="{{item.lpn}}" class="lpn">{{ item.lpn }}</text>
+                      </view>
+                      <view class="brand">{{ item.carBrandName}}-{{item.carTypeName}}</view>
+                      <view class="last-line">
+                        <view class="pos"> <image class="pos-icon" src="../assets/cars/location.png"></image> {{ item.LOCATION_INFO}}</view>
+                        <text class="time" wx:if="item.sendTime">{{ item.sendTime}}</text>
+                        <text class="time" wx:if="!item.sendTime"></text>
+                      </view>
+                    </view>
+                    <view class="arr-right"></view>
+                  </view>
+                </navigator>
+              </li>
+            </repeat>
+          </view>
+          <view wx:if="{{showBottomLoading}}" class="now-loading">
+            正在努力加载
+            <view class="refresh-pull-arrow"></view>
           </view>
         </view>
 
       </scroll-view>
     </view>
-    <view wx:if="{{searchSwitch}}" class="search-page">
-      <view class="search-bar">
-        <view class="back" @tap="toback"> <view class="back-icon"></view> </view>
-        <input class="weui-input search-input" placeholder="请输入VIN或车牌号...." @input="onInputSearch" />
-        <button class="weui-btn mini-btn search-button" type="primary" size="mini">搜索</button>
-      </view>
-      <view class="search-result">
-        <!-- <scroll-view style="height:{{windowHeight}}px;" scroll-y="true" bindscrolltolower="reachSearchBottom" > -->
-          <repeat for="{{ searchRes }}" key="index" index="index" item="item">
-            <li>
-              <navigator url="car-detail?vin={{item.vin}}">
-                <view class="item">{{ item.vin}} <image class="arrow" src="../assets/cars/search-arr.png"></image> </view>
-              </navigator>
-            </li>
-          </repeat>
-        <!-- </scroll-view> -->
+    <!-- loading图标 -->
+    <view wx:if="{{showLoadingIcon}}" class="first-load refreshing" >
+      <view  class="refresh-load">
+        <view class="refresh-pull-arrow"></view>
       </view>
     </view>
 
@@ -527,7 +568,7 @@
 import wepy from 'wepy';
 import { connect } from 'wepy-redux';
 import CarService from '../services/car';
-import toast from '../lib/toast';
+// import toast from '../lib/toast';
 
 @connect({
   platform (state) {
@@ -549,20 +590,16 @@ export default class VehicleInternet extends wepy.page {
 
   };
   data = {
-    brandswitch: false,
-    searchSwitch: false,
-    searchBarShow: false,
-    // arrname: 'arrow',
-    page: 0,
-    pageEnd: false,
     windowHeight: 0,
     canUseReachBottom: true,
-    canReachSearchBottom: true,
+    // canReachSearchBottom: true,
     arr: [],
-    list: [],
+    carsList: [],
+    showList: true,
 
     multiArray: [['品牌'], ['型号']],
     multiIndex: [0, 0],
+    multiValue: [],
 
     touchYDelta: '',
     isLoading: false,  // 是否正在加载
@@ -576,16 +613,17 @@ export default class VehicleInternet extends wepy.page {
     animation: {},
     scrollTop: 0,
     deviceList: [],
-    brands: [],
-    searchRes: [
-      // {id: 1, vin: 'GHHHHHD2004447', lpn: '鲁GFd433'},
-      // {id: 1, vin: 'GHHHHHD2004447', lpn: '鲁GFd433'},
-      // {id: 1, vin: 'GHHHHHD2004447', lpn: '鲁GFd433'}
-    ]
+
+    showLoadingIcon: true,
+    showBottomLoading: false
   }
 
   pageIndex = 0;
   pageSize = 10;
+  currentCarBrand;
+  currentCarType;
+  brandiId = 0;
+  totalPage = 0;
 
   mixins = [];
   multiLoading = false;
@@ -604,7 +642,7 @@ export default class VehicleInternet extends wepy.page {
       const touchobj = ev.touches[0];
       this.firstTouchY = parseInt(touchobj.clientY); // 开始时的y值
       this.initialScroll = this.scrollTop;
-
+      this.$apply();
     },
     touchmove (ev) {
       if (this.isLoading) {
@@ -636,6 +674,7 @@ export default class VehicleInternet extends wepy.page {
         }
       };
       this.throttle(moving(), 10);
+      this.$apply();
     },
     touchend (ev) {
       let self = this;
@@ -650,89 +689,61 @@ export default class VehicleInternet extends wepy.page {
         this.animationData = this.animation.export();
         self.className = 'refreshing';
         this.refresh('success');
+
       } else {
         this.animation.translate3d(0, 0, 0).step({duration: 300});
         this.animationData = this.animation.export();
         this.refresh('error');
       }
       this.isMoved = false;
-    },
-
-    brandChoose () {
-      this.brandswitch = !this.brandswitch;
-    },
-    searchBtn () {
-      this.searchSwitch = true;
-      this.searchBarShow = true;
       this.$apply();
-    },
-    onInputSearch (e) {
-      console.log(e.detail.value);
-      // wepy.showLoading({
-      //   title: '加载中...'
-      // });
-      // let res = CarService.getSearchList({
-      //   key: e.detail.value,
-      //   pageIndex: this.pageIndex,
-      //   pageSize: this.pageSize
-      // });
-
-      // console.log(res);
-      // if (res.list && res.list.length > 0) {
-      //   if (this.pageIndex === 0) {
-      //     this.searchRes = res.list;
-      //   } else {
-      //     let temArr = [...this.searchRes, ...res.list];
-      //     this.searchRes = temArr;
-      //   }
-      //   this.$apply();
-      // }
-      // wepy.hideLoading();
-      // toast.success('加载成功');
-    },
-
-    toback () {
-      this.searchSwitch = false;
-      this.searchBarShow = false;
     },
 
     bindMultiPickerChange (e) {
       // console.log('picker发送选择改变，携带值为', e.detail.value);
       this.multiIndex = e.detail.value;
+      this.pageIndex = 0;
+
+      if (e.detail.value[0] === 0 && e.detail.value[1] === 0) {
+        this.currentCarBrand = this.brandiId;
+        this.currentCarType = null;
+      } else {
+        this.currentCarType = this.multiValue[e.detail.value[1]];
+      }
+      this.getServerItems();
     },
 
     async bindMultiPickerColumnChange (e) {
       // console.log('修改的列为', e.detail.column, '，值为', e.detail.value);
-      if (this.multiLoading) return;
-      wepy.showLoading({
-        title: '刷新数据'
-      });
       var data = {
         multiArray: this.multiArray,
         multiIndex: this.multiIndex
       };
       data.multiIndex[e.detail.column] = e.detail.value;
       if (e.detail.column === 0) {
-        let res = await CarService.getTypes({
-          brand: 'brand'
-        });
+        if (e.detail.value === 0) {
+          data.multiArray[1] = ['全部'];
+        } else {
+          let res = await CarService.getTypes({
+            carBrandId: this.currentCarBrand
+          });
+          let typeArr = ['全部'];
+          let multiValueArr = [null];
+          res.map((val) => {
+            typeArr.push(val.key);
+            multiValueArr.push(val.value);
+          });
+          this.multiValue = multiValueArr;
+          data.multiArray[1] = typeArr;
+          data.multiIndex[1] = 0;
+        }
 
-        let typeArr = ['全部'];
-        res.map((val) => {
-          typeArr.push(val.key);
-        });
-        data.multiArray[1] = typeArr;
         this.$apply();
       }
+      // console.log(this.multiValue);
       // console.log(this.multiArray);
       this.setData(data);
-      wepy.hideLoading();
-      toast.success('加载成功');
     }
-
-  };
-
-  events = {
 
   };
 
@@ -740,16 +751,26 @@ export default class VehicleInternet extends wepy.page {
     wx.createSelectorQuery().select('#scroll-container').scrollOffset((res) => {
       this.scrollTop = res.scrollTop;
     }).exec();
+    this.$apply();
   }
 
   refresh (res) {
     if (res === 'success') {
       setTimeout(() => {
         this.reset();
-        // console.log('刷新成功');
+        this.pageIndex = 0;
+        this.getList();
       }, 3000);
     };
+    this.$apply();
   }
+
+  // async fn () {
+  //   let time =  0;
+  //   this.pageIndex = 0;
+  //   await this.getList();
+  //   this.$apply();
+  // }
 
   reset () {
     this.isLoading = false;
@@ -774,7 +795,7 @@ export default class VehicleInternet extends wepy.page {
   onLoad () {
     let hh = wepy.getSystemInfoSync().windowHeight;
     this.windowHeight = hh;
-    this.getServerItems();
+    this.getServerItemsFirst();
     this.getBrands();
     let animation = wx.createAnimation({
       duration: 0,
@@ -785,67 +806,83 @@ export default class VehicleInternet extends wepy.page {
     this.animationData = animation.export();
   }
 
-  onShow () {
-    // this.getServerItems();
-    // this.getBrands();
-  }
-
-  onReachBottom () {
+  async onReachBottom () {
     if (!this.canUseReachBottom) return;
-    this.getServerItems();
+    await this.getServerItems();
+    this.$apply();
   }
-
-  // reachSearchBottom () {
-  //   if (!this.canReachSearchBottom) return;
-  //   console.log('aaa');
-  // }
 
   async getBrands () {
-    wepy.showLoading({
-      title: '加载中...'
-    });
     let result = await CarService.getBrands();
     let arr = ['品牌'];
+    // console.log(result);
     result.list.forEach((val) => {
       arr.push(val.key);
     });
+    // console.log(arr);
     this.multiArray[0] = arr;
-    let res = await CarService.getTypes({
-      brand: arr[0].key
-    });
-
-    let typeArr = ['型号'];
-    res.map((val) => {
-      typeArr.push(val.key);
-    });
-    this.multiArray[1] = typeArr;
+    this.currentCarBrand = result.list[0].value;
+    this.brandiId = result.list[0].value;
     this.$apply();
-    wepy.hideLoading();
-    toast.success('加载成功');
+
   }
 
   async getServerItems () {
-    this.canUseReachBottom = false;
-    wepy.showLoading({
-      title: '加载中...'
-    });
+    this.showBottomLoading = true;
+    console.log(this.showBottomLoading);
+    await this.getList();
+    this.showBottomLoading = false;
+    this.$apply();
+
+  }
+
+  async getServerItemsFirst () {
+    this.showLoadingIcon = true;
+    await this.getList();
+    this.showLoadingIcon = false;
+    this.$apply();
+
+  }
+
+  async getList() {
     let result = await CarService.getList({
-      page: this.page
+      'pager.pageNo': this.pageIndex,
+      'pager.pageSize': this.pageSize,
+      'Q_t.carInfo.carType.carBrand.id_L_EQ': this.currentCarBrand,
+      'Q_t.carInfo.carType.id_L_EQ': this.currentCarType,
     });
-    wepy.hideLoading();
-    toast.success('加载成功');
-    console.log(result);
+    // console.log(result);
+
+    this.totalPage = Math.ceil(result.totalCount / this.pageSize);
+    // console.log(this.totalPage);
     if (result.mapList && result.mapList.length > 0) {
+      this.showList = true;
       let temArr = result.mapList;
       temArr.map((val) => {
+         // 车牌号优化
+        let lpn = val.lpn;
+        if (lpn !== '') {
+          let char1 = lpn.slice(0, 2);
+          let char2 = lpn.substr(2);
+          val.lpn = char1 + ' ' + char2;
+        }
+
+        // vin优化
+        let framenum = val.framenum;
+        if (framenum !== '') {
+          val.framenum = framenum.slice(0, 8);
+        }
+
         let nowTime = new Date().getTime();
         let lastLocaTime = 0;
         if (val.sendTime) {
           lastLocaTime = new Date(Date.parse(val.sendTime)).getTime();
           val.sendTime = lastLocaTime;
         } else if (val.LASTTIME) {
-          lastLocaTime = new Date(Date.parse(val.sendTime)).getTime();
+          lastLocaTime = new Date(Date.parse(val.LASTTIME)).getTime();
           val.sendTime = lastLocaTime;
+        } else {
+          return;
         }
 
         let timeAgo = nowTime - val.sendTime;
@@ -867,32 +904,27 @@ export default class VehicleInternet extends wepy.page {
           val.sendTime = seconds + '秒前';
         }
 
-        // 车牌号优化
-        let lpn = val.lpn;
-        if (lpn !== '') {
-          let char1 = lpn.slice(0, 2);
-          let char2 = lpn.substr(2);
-          val.lpn = char1 + ' ' + char2;
-        }
-
-        // vin优化
-        let framenum = val.framenum;
-        if (framenum !== '') {
-          val.framenum = framenum.slice(0, 8);
-        }
-        console.log(val.framenum);
-
       });
-      this.arr = this.arr.concat(temArr);
-      this.list = this.arr;
-      console.log(this.list);
-      this.page++;
-      this.canUseReachBottom = true;
-      this.$apply();
-    } else {
-      this.pageEnd = true;
-    }
+      if (this.pageIndex === 0) {
+        this.carsList = temArr;
+      } else {
+        let arr = [...this.carsList, ...temArr];
+        this.carsList = arr;
+      };
+      // console.log(this.carsList);
+      this.pageIndex++;
+      if (this.pageIndex >= this.totalPage) {
+        this.canUseReachBottom = false;
+        this.$apply();
+      } else {
+        this.canUseReachBottom = true;
+      }
 
+      // console.log(this.pageIndex);
+    } else {
+      this.showList = false;
+    };
+    this.$apply();
   }
 
   // watch = {
@@ -904,14 +936,6 @@ export default class VehicleInternet extends wepy.page {
   //     });
   //   }
   // }
-
-  onHide () {
-
-  }
-
-  onUnLoad () {
-
-  }
 
 }
 </script>

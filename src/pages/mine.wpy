@@ -42,9 +42,9 @@
     <view class="weui-cells weui-cells_after-title mine-info-box">
       <navigator url="profile/user-information" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
         <view class="weui-cell__hd">
-          <image src="{{ profile.headImageUrl }}"></image>
+          <image src="{{ profile.photo }}"></image>
         </view>
-        <view class="weui-cell__bd">{{ profile.userName }}</view>
+        <view class="weui-cell__bd">{{ profile.name }}</view>
         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
       </navigator>
     </view>

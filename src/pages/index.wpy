@@ -21,7 +21,7 @@
     text-indent: 36rpx;
   }
   .summary {
-    padding: 0 54rpx;
+    padding: 0 36rpx;
     min-height:480rpx;
     li {
       display: inline-block;
@@ -55,10 +55,11 @@
     .chart-map {
       margin-bottom: 40rpx;
       width: 100%;
-      height: 460rpx;
+      height: 500rpx;
     }
     .map-list {
-      height: 420rpx;
+      height: 440rpx;
+      padding-bottom: 20rpx;
       swiper {
         height: 100%;
       }
@@ -68,6 +69,9 @@
         &:first-child .map-list-item li:nth-child(3) {
           b, text {
             color: @normal;
+          }
+          b {
+            background-color: rgba(68,117,253,0.1);
           }
         }
       }
@@ -89,8 +93,9 @@
               margin: 0 20rpx 0 50rpx;
               width: 56rpx;
               height: 34rpx;
+              line-height: 34rpx;
               text-align: center;
-              color: rgba(0,0,0,0.8);
+              color: rgba(0,0,0,0.2);
               font-size: 26rpx;
               font-weight: bold;
               border-radius: 18rpx;
@@ -121,8 +126,8 @@
     .chart-pie {
       width: 100%;
       height: 490rpx;
-      background: url(data:image/png;base64,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) no-repeat center;
-      background-size: 80rpx auto;
+      background: url(data:image/png;base64,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) no-repeat center;
+      background-size: 74rpx auto;
     }
     .pie-list {
       display: flex;
@@ -130,7 +135,7 @@
       flex-direction: column;
       justify-content: flex-start;
       align-items: flex-start;
-      height: 180rpx;
+      height: 250rpx;
       li {
         display: flex;
         flex-direction: row;
@@ -168,7 +173,7 @@
 
 <template>
   <view class="container">
-    <view class="top-info">{{ profile.userName }}，您好！欢迎使用{{ profile.platformName }}</view>
+    <view class="top-info">{{ profile.name }}，您好！欢迎使用{{ profile.platformName }}</view>
     <view class="bg summary">
       <repeat for="{{ summaryData }}" key="index" index="index" item="item">
         <li>
@@ -250,6 +255,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import profileService from '../services/profile';
+  import toast from '../lib/toast';
 
   import ecCanvas from '../plugins/ec-canvas/ec-canvas';
   import * as echarts from '../plugins/ec-canvas/echarts';
@@ -284,8 +290,8 @@
       ],
       indicatorDots: true,
       autoplay: false,
-      interval: 5000,
-      duration: 1000,
+      interval: 3000,
+      duration: 400,
       mapList: [],
       markPointData: [],
       maxValue: 0,
@@ -293,7 +299,7 @@
       lineData: [],
       xAxisData: [],
       carScaleData: [],
-      pieColor: ['#678EFB', '#10D988', '#F09930', '#FDD02B', '#9155BC']
+      pieColor: ['#5F87F8', '#21CC6D', '#F09930', '#FFB909', '#FDD02B', '#9155BC', '#50459B', '#22BFFF', '#25A0FF', '#10D998']
     };
 
     methods = {
@@ -330,58 +336,81 @@
     events = {
     };
 
-    async onLoad () {
-      console.info('onLoad');
+    onLoad() {
+      this.initData();
+    }
+
+    async initData () {
       wepy.showLoading({
         title: '加载中'
       });
-      await this.getCarSituation();
-      await this.getProvinceCarInfo();
-      await this.getCarConfigurationInfo();
-      await this.getCarModelsInfo();
+      this.bindCarSituation();
+      this.bindProvinceCarInfo();
+      this.bindCarConfigurationInfo();
+      this.bindCarModelsInfo();
       wepy.hideLoading();
+      toast.success('加载成功');
+      this.$apply();
+    }
+
+    watch = {
+      platform: () => {
+        this.initData();
+      }
+    };
+
+    async bindCarSituation() {
+      await this.getCarSituation();
+      this.$apply();
+    }
+
+    async bindProvinceCarInfo() {
+      await this.getProvinceCarInfo();
       this.$apply();
       this.bindChartMap();
+    }
+
+    async bindCarConfigurationInfo() {
+      await this.getCarConfigurationInfo();
+      this.$apply();
       this.bindChartLine();
+    }
+
+    async bindCarModelsInfo() {
+      await this.getCarModelsInfo();
+      this.$apply();
       this.bindChartPie();
-    }
-
-    onHide() {
-      console.info('onHide');
-    }
-
-    onShow() {
-      console.info('onShow');
-    }
-
-    onUnLoad() {
-      console.info('onUnLoad');
     }
 
     // 车辆状况
     async getCarSituation () {
       let result = await profileService.getCarSituation();
       this.summaryData = [];
-      let carStatistics = result.carStatistics;
+      let onlineMap = result.onlineMap;
       this.summaryData = [
-        {id: 1, title: '所有车辆', number: carStatistics.allCar, src: '../assets/index/icon1-1.svg'},
-        {id: 2, title: '今日在线', number: carStatistics.onlineToday, src: '../assets/index/icon1-2.svg'},
-        {id: 3, title: '今日离线', number: carStatistics.offlineToday, src: '../assets/index/icon1-3.svg'},
-        {id: 4, title: '当前行驶', number: carStatistics.drive, src: '../assets/index/icon1-4.svg'},
-        {id: 5, title: '当前停车', number: carStatistics.paking, src: '../assets/index/icon1-5.svg'}
+        {id: 1, title: '所有车辆', number: onlineMap.ALLNUM, src: '../assets/index/icon1-1.svg'},
+        {id: 2, title: '今日在线', number: onlineMap.ONLINENUM, src: '../assets/index/icon1-2.svg'},
+        {id: 3, title: '今日离线', number: onlineMap.OFFLINENUM, src: '../assets/index/icon1-3.svg'},
+        {id: 4, title: '当前行驶', number: onlineMap.todayRunCount, src: '../assets/index/icon1-4.svg'},
+        {id: 5, title: '当前停车', number: onlineMap.todayStopCount, src: '../assets/index/icon1-5.svg'}
       ];
     }
 
     // 各省车辆情况
     async getProvinceCarInfo() {
       let result = await profileService.getProvinceCarInfo();
-      this.mapList = result.mapList;
-      let seriesData = this.convertProvinceName(this.convertArrJsonName(result.mapList));
-      let length = result.mapList.length;
-      seriesData.sort((a, b) => b.value - a.value);
-      this.markPointData = seriesData.slice(0, 3);
-      this.maxValue = seriesData[0].value;
-      this.minValue = seriesData[length - 1].value;
+      this.mapList = result.list.map(item => {
+        return {
+          name: item.province,
+          value: item.car_count
+        };
+      });
+      this.mapList = this.convertProvinceName(this.mapList);
+      this.mapList.sort((a, b) => b.value - a.value);
+      let length = this.mapList.length;
+      this.markPointData = this.mapList.slice(0, 3);
+      this.maxValue = this.mapList[0].value;
+      this.minValue = this.mapList[length - 1].value;
       this.markPointData = this.markPointData.map(v => {
         v.coord = geoJson.features.find(x => x.properties.name === v.name).properties.cp;
         return v;
@@ -391,19 +420,27 @@
     // 近六个月车辆配装情况
     async getCarConfigurationInfo() {
       let result = await profileService.getCarConfigurationInfo();
-      result.carConfigurationData.map(item => {
-        this.lineData.push(item.value);
-        this.xAxisData.push(item.month);
+      this.xAxisData = result.data.categories;
+      result.data.series.map((item, key) => {
+        result.data.series[key].data.map((value, i) => {
+          if (this.isBlank(this.lineData[i])) {
+            this.lineData[i] = 0;
+          }
+          this.lineData[i] += value;
+        });
       });
+      console.log(this.xAxisData)
+      console.log(this.lineData)
     }
 
     // 各车型车辆数
     async getCarModelsInfo() {
       let result = await profileService.getCarModelsInfo();
-      this.carScaleData = result.carScaleData.map((item, key) => {
+      result.list.sort((a, b) => b.car_count - a.car_count);
+      this.carScaleData = result.list.map((item, key) => {
         return {
-          name: item.name,
-          value: item.value,
+          name: item.car_type_name,
+          value: item.car_count,
           color: this.pieColor[key]
         };
       });
@@ -429,6 +466,9 @@
           // borderRadius: 20,
           inRange: {
             color: ['rgba(68,117,253,0.1)', '#4475FD']
+          },
+          outOfRange: {
+            colorAlpha: 0
           }
         },
         // geo: {
@@ -460,7 +500,10 @@
           {
             type: 'map',
             mapType: 'china',
-            top: 15,
+            top: 10,
+            // left: 43,
+            // right: 43,
+            bottom: 30,
             // type: 'scatter',
             // coordinateSystem: 'geo',
             itemStyle: {
@@ -504,7 +547,7 @@
         backgroundColor: '#fff',
         tooltip: {
           trigger: 'axis',
-          showContent: false,
+          showContent: true,
           axisPointer: {
             type: 'cross'
           }
@@ -514,30 +557,34 @@
         },
         grid: {
           left: '3%',
-          right: '13%',
+          right: '7%',
           bottom: '8%',
           containLabel: true
         },
         xAxis: {
           name : '(月份)',
           nameTextStyle: {
-            align: 'left'
+            fontSize: 9,
+            padding: [25,0,0,-15],
+            color: '#bbb'
           },
           type: 'category',
           splitLine: {show: true},
-          boundaryGap: true,
+          boundaryGap: false,
           data: this.xAxisData,
           axisLine: {
             lineStyle: {
               type: 'solid',
-              color: '#666', // 左边线的颜色
-              opacity: 0.8,
+              color: '#999', // 左边线的颜色
+              opacity: 0.2,
               width: '1' // 坐标线的宽度
             }
           },
           axisLabel: {
             textStyle: {
-              color: '#000' // 坐标值得具体的颜色
+              color: '#666', // 坐标值得具体的颜色
+              nameRotate: 15,
+              fontSize: 9
             }
           },
           axisTick: {
@@ -547,22 +594,29 @@
         yAxis: {
           name : '(数量)',
           nameTextStyle: {
-            align: 'left',
-            opacity: 0.3
+            fontSize: 9,
+            padding: [0,40,0,0],
+            color: '#bbb'
           },
           type: 'value',
+          // max: function(value) {
+          //   return value.max;
+          // },
           splitLine: {show: true}, // 去除网格线
           splitArea: {show: false},
           axisLine: {
             lineStyle: {
               type: 'solid',
-              color: '#666', // 左边线的颜色
+              color: '#999', // 左边线的颜色
+              opacity: 0.2,
               width: '1' // 坐标线的宽度
             }
           },
           axisLabel: {
+            formatter: function(value) { return value / 1000 + ' K'},
             textStyle: {
-              color: '#000' // 坐标值得具体的颜色
+              color: '#666', // 坐标值得具体的颜色
+              fontSize: 9
             }
           },
           axisTick: {
@@ -577,7 +631,7 @@
           smooth: true,
           markPoint: {
           symbol: 'circle',
-          symbolSize: 12,
+          symbolSize: 8,
           label: {
             normal: {
               show: true,
@@ -585,18 +639,18 @@
               color: '#fff',
               fontSize: 12,
               borderWidth: 10,
-              borderRadius: 4,
-              padding: [1, 6, 1, 6],
-              borderColor: '#4F91FF',
-              backgroundColor: '#4F91FF'
+              borderRadius: 10,
+              padding: [4, 6, 4, 6],
+              // borderColor: '#4F91FF',
+              backgroundColor: '#4475FD'
             }
           },
           itemStyle: {
             normal: {
-              color: '#4F91FF',
+              color: '#4475FD',
               fontSize: 5,
               borderColor: '#fff',
-              borderWidth: 3,
+              borderWidth: 2,
               label: {
                 show: false
               }
@@ -624,8 +678,8 @@
             },
             normal: {
               lineStyle: {
-                width: 3, // 0.1的线条是非常细的了
-                color: '#4F91FF' // 折线颜色
+                width: 2, // 0.1的线条是非常细的了
+                color: '#4475FD' // 折线颜色
               }
             }
           },
@@ -637,9 +691,9 @@
               x2: 0,
               y2: 1,
               colorStops: [{
-                offset: 0, color: 'rgba(68,117,253,0.5)' // 0% 处的颜色
+                offset: 0, color: 'rgba(86,130,254,0.4)' // 0% 处的颜色
               }, {
-                offset: 1, color: 'rgba(68,117,253,0.1)' // 100% 处的颜色
+                offset: 1, color: 'rgba(67,116,252,0)' // 100% 处的颜色
               }],
               globalCoord: true // 缺省为 false
             }
@@ -674,7 +728,8 @@
           {
             name:'',
             type:'pie',
-            radius: ['40%', '55%'],
+            radius: ['37%', '55%'],
+            startAngle: 190, // 起始角度
             avoidLabelOverlap: false,
             label: {
               normal: {
@@ -683,7 +738,6 @@
                 position: 'outside',
                 textStyle: {
                   fontSize: '10',
-                  fontWeight: 'bold',
                   color: '#666'
                 },
                 rich: {
@@ -721,11 +775,13 @@
       this.chartPie.setOption(option);
     }
 
-    // 改字段名
-    convertArrJsonName (json, oldName = 'province', newName = 'name') {
-      let reg = new RegExp(oldName, 'ig');
-      return JSON.parse(JSON.stringify(json).replace(reg, newName));
+    // 判断值是否存在函数
+    isBlank(val) {
+      if (val == null || val == '') {
+        return true;
+      }
     }
+
     // 改省份名
     convertProvinceName (data) {
       return JSON.parse(JSON.stringify(data).replace(/[省|市|自治区|壮族自治区|回族自治区|维吾尔自治区|特别行政区]/g, ''));

@@ -61,13 +61,15 @@ view.btn-show-dialog {
     view.list {
       box-sizing: border-box;
       view.item {
+        box-sizing: border-box;
         float: left;
         width: 33.33%;
         height: 122rpx;
         margin: 0 0 26rpx 0;
         padding: 0 13rpx;
         box-sizing: border-box;
-        view {
+        &>view {
+        box-sizing: border-box;
           position: relative;
           box-sizing: border-box;
           display: flex;
@@ -76,11 +78,12 @@ view.btn-show-dialog {
           justify-content: center;
           border: 2rpx solid #eee;
           border-radius: 20rpx;
-          font-size: 28rpx;
-          color: #999;
           height: 100%;
           width: 100%;
           text-align: center;
+          padding: 9px;
+          font-size: 28rpx;
+          color: #999;
 
           icon {
             position: absolute;
@@ -91,6 +94,20 @@ view.btn-show-dialog {
           &.selected {
             border-color: #4475FD;
             color: #4475FD;
+          }
+
+          &>text {
+            box-sizing: border-box;
+            text-align: center;
+            width: 100%;
+            overflow: hidden;
+            display: -webkit-box;
+            line-height: 40rpx;
+            word-break: break-all;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp:2;
+            overflow: hidden;
+            text-overflow:ellipsis;
           }
         }
 
@@ -176,8 +193,8 @@ view.btn-show-dialog {
     <view @tap="showDialog" class="btn-show-dialog"><i class="foton-ui plus"></i>添加账号</view>
     <view class="platforms-wrapper">
       <view class="info" hidden="{{ !selectedPlatform }}">
-        <label>{{ selectedPlatform.userName }}</label>
-        <text>{{ selectedPlatform.nickName }}</text>
+        <label>{{ selectedPlatform.name }}</label>
+        <text>{{ selectedPlatform.fullname }}</text>
         <view @tap="removePlatform">解除绑定</view>
       </view>
       <view class="list-wrapper">
@@ -186,9 +203,8 @@ view.btn-show-dialog {
           <repeat for="{{platforms}}" key="index" index="index" item="item">
             <view @tap="selectPlatform({{index}})" class="item">
               <view class="{{ item.selected ? 'selected' : '' }}">
-                <icon color="#4475FD" type="success" size="17" wx:if="{{ item.code === profile.platformCode && item.userName === profile.userName && item.code === localUser.platformCode }}"></icon>
+                <icon color="#4475FD" type="success" size="17" wx:if="{{ item.company.code === profile.platformCode && item.name === profile.userName && item.company.code === localUser.platformCode }}"></icon>
                 <text>{{ item.viewName }}</text>
-                <text>车联网平台</text>
               </view>
             </view>
           </repeat>
@@ -212,13 +228,17 @@ view.btn-show-dialog {
 <script>
 import wepy from 'wepy';
 import { connect } from 'wepy-redux';
+import { profile } from '../../stores/actions';
 import profileService from '../../services/profile';
+import passportService from '../../services/passport';
 import toast from '../../lib/toast';
 
 @connect({
   profile (state) {
     return state.profile.user;
   }
+}, {
+  asyncProfileInfo: profile.asyncProfileInfo
 })
 export default class ProfilePlatform extends wepy.page {
 
@@ -245,8 +265,25 @@ export default class ProfilePlatform extends wepy.page {
   };
 
   methods = {
-    loginTo() {
-      this.localUser.platformCode = this.selectedPlatform.code;
+    async loginTo() {
+      this.localUser.platformCode = this.selectedPlatform.company.code;
+      this.localUser.platformName = this.selectedPlatform.company.name;
+
+      let result = await passportService.login({
+        companyNo: this.selectedPlatform.company.code,
+        username: this.selectedPlatform.name,
+        password: this.selectedPlatform.orginalPassword
+      });
+
+      if (result.code !== 200) {
+        toast.error(result.msg);
+        return;
+      } else {
+        toast.success('登录成功');
+      }
+
+      await this.syncProfile();
+
       wepy.setStorageSync('currentUser', this.localUser);
       wepy.switchTab({
         url: '/pages/index'
@@ -256,7 +293,10 @@ export default class ProfilePlatform extends wepy.page {
       wepy.showLoading({
         title: '提交中'
       });
-      let result = await profileService.removePlatform(this.selectedPlatform);
+      let result = await profileService.removePlatform({
+        code: this.selectedPlatform.company.code,
+        username: this.selectedPlatform.name
+      });
       toast.showByResult(result);
       await this.syncPlatforms();
       wepy.hideLoading();
@@ -331,10 +371,14 @@ export default class ProfilePlatform extends wepy.page {
     this.formErrorMsg = '';
   }
 
+  async syncProfile() {
+    await this.methods.asyncProfileInfo();
+  }
+
   async syncPlatforms () {
     let result = await profileService.getPlatforms();
     this.platforms = result.list.map((e, i) => {
-      e.viewName = e.name.replace('车联网平台', '');
+      e.viewName = e.company.name.replace('车联网平台', '');
       e.index = i;
       e.selected = false;
       return e;
@@ -343,6 +387,7 @@ export default class ProfilePlatform extends wepy.page {
     } else {
       this.showAddPlatformDialog();
     }
+    this.$apply();
   }
 
   async onShow () {
@@ -351,7 +396,6 @@ export default class ProfilePlatform extends wepy.page {
     });
     await this.syncPlatforms();
     wepy.hideLoading();
-    this.$apply();
   }
 
   onUnLoad () {

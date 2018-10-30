@@ -150,24 +150,32 @@
       }
     }
   }
+
   .map-echart-time, .mapTimeRadar {
     width: 100%;
     height: rpx(140);
   }
+
   #day-map2 {
     width: 100%;
     height: rpx(260);
   }
+
+  .no-part {
+    box-shadow: none;
+    margin-bottom: 0;
+  }
 </style>
 <template>
-  <swiper previous-margin="68rpx" next-margin="68rpx" class="my-swiper">
+  <swiper previous-margin="68rpx" next-margin="68rpx" class="my-swiper"
+          bindchange="changeItem">
     <repeat for="{{dayTime}}" index="index" item="item">
       <swiper-item>
         <view class="day-time-swiper-item flex">
           <view class="day-time-swiper-item-start flex">
             <text class="icon">起</text>
             <view class="info">
-              <text>2018-01-12 00:00:05</text>
+              <text>{{item.startTime}}</text>
               <text>北京市了科技管理简单实际付款建设路口了会计师法律纠纷</text>
             </view>
           </view>
@@ -175,7 +183,7 @@
             class="day-time-swiper-item-start flex day-time-swiper-item-end">
             <text class="icon">终</text>
             <view class="info">
-              <text>2018-01-12 00:00:05</text>
+              <text>{{item.endTime}}</text>
               <text>北京市了科技管理简单实际付款建设路口了会计师法律纠纷</text>
             </view>
           </view>
@@ -186,52 +194,8 @@
   <view class="trip-day">
     <view class="day-run">
       <view class="day-map">
-        <view class="map-echart line-eee flex">
-          <view class="map-echart-time">
-            <mapRadarEcharts class="mapTimeRadar" @ready.user="mapRadar"/>
-          </view>
-          <view class="map-echart-info">
-            <view class="map-echart-info-item">
-              <text>行驶里程：</text>
-              <text>13.21km</text>
-            </view>
-            <view class="map-echart-info-item">
-              <text>行驶时长：</text>
-              <text>00:34:33</text>
-            </view>
-            <view class="map-echart-info-item">
-              <text>平均速度：</text>
-              <text>13.21km/h</text>
-            </view>
-            <view class="map-echart-info-item">
-              <text>最大速度：</text>
-              <text>13.21km/h</text>
-            </view>
-          </view>
-        </view>
-        <view class="scroll-map-title">
-          <scroll-view wx:if="mapTitleLength" scroll-x="true" class="map-line-title"
-                       style="width: auto">
-            <repeat for="{{mapTitleLength}}" key="index" index="index"
-                    item="item">
-              <view class="map-line-title-list">
-                <view class="map-line-title-item flex">
-                  <text style="background-color: {{mapTitleColor[2 * index % 6]}}">
-                    {{mapTitle[2 * index].iconText}}
-                  </text>
-                  <text>{{mapTitle[2 * index].num}}</text>
-                  <text>{{mapTitle[2 * index].name}}</text>
-                </view>
-                <view class="map-line-title-item flex">
-                  <text style="background-color: {{mapTitleColor[(2 * index + 1) % 6]}}">
-                    {{mapTitle[2 * index + 1].iconText}}
-                  </text>
-                  <text>{{mapTitle[2 * index + 1].num}}</text>
-                  <text>{{mapTitle[2 * index + 1].name}}</text>
-                </view>
-              </view>
-            </repeat>
-          </scroll-view>
+        <view class="part no-part">
+          <operationSituation :operations.sync="operations"/>
         </view>
         <map id="day-map2" include-points="{{includePoints}}"
              markers="{{markers}}" polyline="{{polyline}}">
@@ -239,228 +203,144 @@
         </map>
       </view>
     </view>
+    <noMore></noMore>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-  import ecCanvas from '../../plugins/ec-canvas/ec-canvas';
-  import * as echarts from '../../plugins/ec-canvas/echarts';
+  import OperationSituation from '../../components/trip/operation-situation';
+  import tripService from '../../services/trip';
+  import numToFixed from '../../lib/numToFixed';
+  import secToTime from '../../lib/secToTime';
+  import NoMore from '../../components/no-more';
 
-  const MAP_LINE_TITLE_COLOR = [
-    '#FF7D2A',
-    '#ECC600',
-    '#6756FF',
-    '#E33CD8',
-    '#00B6D0',
-    '#FF4444'];
   export default class TripDayTime extends wepy.page {
     data = {
-      mapTitleColor: MAP_LINE_TITLE_COLOR,
-      dayTime: 3,
-      mapTitle: [
+      operations: [
         {
-          iconText: '加',
-          num: 2,
-          name: '急加速',
+          img: '../../assets/trip/oper-icon-01.png',
+          title: '行驶里程',
+          val: 0,
+          unit: 'km',
         },
         {
-          iconText: '减',
-          num: 2,
-          name: '急减速',
+          img: '../../assets/trip/oper-icon-02.png',
+          title: '行驶时长',
+          val: 0,
         },
         {
-          iconText: '加',
-          num: 2,
-          name: '急加速',
+          img: '../../assets/trip/oper-icon-05.png',
+          title: '平均速度',
+          val: 0,
+          unit: 'km/h',
         },
         {
-          iconText: '减',
-          num: 2,
-          name: '急减速',
-        },
-        {
-          iconText: '加',
-          num: 2,
-          name: '急加速',
-        },
-        {
-          iconText: '减',
-          num: 2,
-          name: '急减速',
-        },
-        {
-          iconText: '超',
-          num: 2,
-          name: '超速',
-        },
-        {
-          iconText: '变',
-          num: 2,
-          name: '急变道',
-        },
-        {
-          iconText: '转',
-          num: 2,
-          name: '急转弯',
-        },
-        {
-          iconText: '神',
-          num: 2,
-          name: '走神',
+          img: '../../assets/trip/oper-icon-10.png',
+          title: '最大速度',
+          val: 0,
+          unit: 'km/h',
         },
       ],
-      markers: [
-        {
-          iconPath: '../../assets/trip/icon-start.png',
-          id: 0,
-          latitude: 23.10229,
-          longitude: 113.3245211,
-          width: 21,
-          height: 27,
-          zIndex: 2,
-        },
-        {
-          iconPath: '../../assets/trip/tran.png',
-          fill: '#ff0000',
-          id: 1,
-          longitude: 113.335520,
-          latitude: 23.21229,
-          zIndex: 2,
-          label: {
-            content: '超',
-            color: '#ffffff',
-            padding: 5,
-            anchorY: -17,
-            anchorX: -7,
-            borderRadius: 5,
-            zIndex: 3,
-            fontSize: 10,
-            bgColor: '#ff0000',
-          },
-        },
-        {
-          iconPath: '../../assets/trip/icon-end.png',
-          id: 2,
-          latitude: 23.21229,
-          longitude: 113.324520,
-          width: 21,
-          height: 27,
-          zIndex: 2,
-        },
-      ],
-      includePoints: [
-        {
-          longitude: 113.3245211,
-          latitude: 23.10229,
-        },
-        {
-          longitude: 113.335520,
-          latitude: 23.21229,
-        },
-        {
-          longitude: 113.324520,
-          latitude: 23.21229,
-        },
-      ],
-      polyline: [
-        {
-          points: [
-            {
-              longitude: 113.3245211,
-              latitude: 23.10229,
-            },
-            {
-              longitude: 113.335520,
-              latitude: 23.21229,
-            },
-            {
-              longitude: 113.324520,
-              latitude: 23.21229,
-            },
-          ],
-          color: '#FF0000',
-          width: 2,
-          dottedLine: false,
-        },
-      ],
+      dayTime: [],
+      markers: [],
+      includePoints: [],
+      polyline: [],
       year: 0,
       month: 0,
       day: 0,
-      echartsRadarOption: {
-        radar: {
-          name: {
-            textStyle: {
-              color: '#bbb',
-            },
-          },
-          radius: '70%',
-          nameGap: 2,
-          splitNumber: 1,
-          splitLine: {
-            lineStyle: {
-              color: '#bbb',
-            },
-          },
-          indicator: [
-            {name: '速度', max: 100},
-            {name: '减速', max: 100},
-            {name: '里程', max: 100},
-            {name: '环境', max: 100},
-            {name: '疲劳', max: 100},
-            {name: '时段', max: 100},
-            {name: '加速', max: 100},
-          ],
-        },
-        series: [
-          {
-            name: '',
-            type: 'radar',
-            symbol: 'none',
-            areaStyle: {
-              color: '#E3EBFF',
-            },
-            lineStyle: {
-              color: '#6790FD',
-              type: 'dotted',
-            },
-            data: [
-              {
-                value: [43, 10, 13, 28, 35, 5, 19],
-                name: '',
-              },
-            ],
-          }
-        ],
-      },
+      carId: '',
+      currentTime: 0,
     };
 
-    computed = {
-      mapTitleLength() {
-        return Math.ceil(this.mapTitle.length / 2);
-      },
-    };
+    computed = {};
 
     components = {
-      mapRadarEcharts: ecCanvas
+      noMore: NoMore,
+      operationSituation: OperationSituation,
     };
 
-    methods = {
-      mapRadar(canvas, width, height, callback) {
-        const chart = echarts.init(canvas, null, {
-          width: width,
-          height: height,
-        });
-        canvas.setChart(chart);
-        callback(canvas);
-        let scoreOpt = this.echartsRadarOption;
-        chart.setOption(scoreOpt);
-        return chart;
+    methods = {};
+
+    changeItem(e) {
+      if (e.detail.source === 'touch') {
+        this.currentTime = e.detail.current || 0;
+        this.getMapList(this.dayTime[this.currentTime]);
+        this.$apply();
       }
     };
 
-    events = {
+    getMapList(item) {
+      this.operations[0].val = item.mileage;
+      this.operations[1].val = item.workTime;
+      this.operations[2].val = item.avgVelocity;
+      this.operations[3].val = item.maxVelocity;
+      let data = JSON.parse(wx.getStorageSync('map'));
+      let start = data.findIndex((ele) => {
+        return (new Date(item.startTime).getTime()) <=
+          (new Date(ele.dataTime).getTime());
+      });
+      let end = data.findIndex((ele) => {
+        return (new Date(item.endTime).getTime()) <=
+          (new Date(ele.dataTime).getTime());
+      });
+      let newData = data.slice(start, end + 1);
+      let len = newData.length;
+      this.includePoints = newData;
+      this.polyline = [
+        {
+          points: newData,
+          color: '#FF0000',
+          width: 2,
+          dottedLine: false,
+        }];
+      let iconPath = '';
+      let iconPath1 = '../../assets/trip/icon-start.png';
+      let iconPath2 = '../../assets/trip/icon-end.png';
+      let iconPath3 = '../../assets/trip/tran.png';
+      newData.map((ele, i) => {
+        if (i === 0) {
+          iconPath = iconPath1;
+        } else if (i === len - 1) {
+          iconPath = iconPath2;
+        } else {
+          iconPath = iconPath3;
+        }
+        return Object.assign(ele, {
+          id: i,
+          iconPath,
+          width: 21,
+          height: 27,
+          zIndex: 2,
+        });
+      });
+      this.markers = newData;
+      this.$apply();
     };
+
+    async getData(carId, day) {
+      // 获取分段行程
+      let data = await tripService.getTripDayTime({
+        day,
+        carId,
+      });
+      if (data.code === 200) {
+        this.dayTime = data.list.map(ele => {
+          return Object.assign(ele, {
+            mileage: numToFixed(ele.mileage / 1000, 1),
+            workTime: secToTime(Math.round((new Date(ele.endTime).getTime() -
+              new Date(ele.startTime).getTime()) / 1000)),
+            avgVelocity: numToFixed(ele.avgVelocity),
+            maxVelocity: numToFixed(ele.maxVelocity),
+          });
+        });
+        // 调用一次获取地图数据
+        this.getMapList(this.dayTime[this.currentTime]);
+        this.$apply();
+      }
+    };
+
+    events = {};
 
     onUnload() {
       this.$broadcast('destroy-echarts');
@@ -474,6 +354,9 @@
       wepy.setNavigationBarTitle({
         title: `${this.year}年${this.month}月${this.day}日分段行程`,
       });
+      this.carId = option.carId;
+      this.getData(this.carId, option.y);
+      this.$apply();
     }
   }
 </script>

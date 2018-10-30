@@ -1,6 +1,8 @@
 <style lang="less">
 @import "../style/global.less";
-
+.page__bd {
+  padding-bottom: 0;
+}
 .weui-navbar {
   background-color: #fff;
 }
@@ -25,8 +27,9 @@
   }
 }
 .weui-tab__panel {
-  padding: 100rpx 16rpx;
+  padding: 100rpx 16rpx 0;
   background-color: #f8f8f8;
+
 }
 </style>
 <template>
@@ -51,6 +54,7 @@
           </view>
         </view>
       </view>
+      <noMore></noMore>
     </view>
   </view>
 </template>
@@ -60,17 +64,22 @@ import wepy from 'wepy';
 import RealTime from '../components/real-time';
 import Portrait from '../components/portrait';
 import TripIndex from './trip/trip-index';
+import NoMore from '../components/no-more';
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '车辆详情'
+    navigationBarTitleText: '车辆详情',
+    enablePullDownRefresh: false,
+    // disableScroll: true
   }
   components = {
     realTime: RealTime,
     tripIndex: TripIndex,
-    portrait: Portrait
+    portrait: Portrait,
+    noMore: NoMore
   }
   data = {
-    vin: '',
+    carId: '',
+    did: '',
     tabs: ['实时', '行程', '画像'],
     activeIndex: 0,
     sliderOffset: 0
@@ -86,26 +95,28 @@ export default class Index extends wepy.page {
 
   renderTabByIndex() {
     if (this.activeIndex === '1') {
-      this.$broadcast('getTripIndex', this.vin);
+      this.$broadcast('getTripIndex', this.carId, this.did);
     } else if (this.activeIndex === '2') {
-      this.$broadcast('portraitRender', this.vin);
+      this.$broadcast('portraitRender', this.carId);
     } else {
-      this.$broadcast('realTimeRender', this.vin);
+      this.$broadcast('realTimeRender', this.carId, this.did);
     }
   }
 
   onLoad(params) {
-
-    this.vin = params.vin;
+    this.carId = params.carId;
+    this.did = params.did;
     this.$apply();
     this.renderTabByIndex();
   }
 
   onUnload() {
+    this.carId = '';
     this.activeIndex = '0';
     this.sliderOffset = '0';
     this.$apply();
     this.$broadcast('destroy-echarts');
+    this.$broadcast('resetCarIdDid');
   }
 }
 </script>

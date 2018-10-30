@@ -12,8 +12,13 @@ class PassportService {
     return result;
   }
 
-  async login() {
-    return {};
+  async login({ username, password, companyNo }) {
+    let result = await ajaxProvider.request('login', {
+      username: username || 'sa',
+      password: password || 'IPdtB6HiNx',
+      companyNo: companyNo || 'E017'
+    });
+    return result;
   }
 
   saveCookie() {

@@ -12,8 +12,8 @@ class ProfileService {
     return result.data;
   }
 
-  async removePlatform(params) {
-    let result = await ajaxProvider.request('removePlatform', params);
+  async removePlatform({code, username}) {
+    let result = await ajaxProvider.request('removePlatform', { code, username });
     return result;
   }
 
@@ -33,10 +33,10 @@ class ProfileService {
     let result = await ajaxProvider.request('updateUserName', params);
     return result;
   }
-  async uploadFile(params) {
-    let result = await ajaxProvider.request('uploadFile', params);
-    return result;
-  }
+  // async uploadFile(params) {
+  //   let result = await ajaxProvider.request('uploadFile', params);
+  //   return result;
+  // }
   async submitSuggest(params) {
     let result = await ajaxProvider.request('submitSuggest', params);
     return result;

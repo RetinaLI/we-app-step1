@@ -1,19 +1,30 @@
-import wepy from 'wepy'
+import wepy from 'wepy';
+import toast from '../lib/toast';
 
 const SERVER_API_ROUTE_MAP = {
   // passport
+  'login': {
+    url: '/security/login!loginNoCaptcha.do',
+    method: 'post',
+    isArray: false
+  },
   'registUserByWeiXinUserInfo': {
     url: '/passport/regist',
     method: 'post',
     isArray: false
   },
+  'uploadAvatar': {
+    url: '/file!uploadFiles.do?moduleId=user_manage',
+    method: 'post',
+    isArray: false
+  },
   'getCurrentUser': {
-    url: '/profile/info',
+    url: '/manage/user!getSelf.do',
     method: 'get',
     isArray: false
   },
   'getProfilePlatforms': {
-    url: '/profile/platform/list',
+    url: '/manage/user!listGroupUsers.do',
     method: 'get',
     isArray: true
   },
@@ -35,25 +46,77 @@ const SERVER_API_ROUTE_MAP = {
   },
   // 车辆详情-实时
   'getRealTimeInfo': {
-    url: '/car/realTimeInfo',
+    url: '/business/can_bus!listAnalysisCodes.do',
+    method: 'get',
+    isArray: false
+  },
+  // 车辆详情-实时
+  'getCarDetailInfo': {
+    url: '/business/device!findByDid.do',
+    method: 'get',
+    isArray: false
+  },
+  // 车辆详情-实时
+  'getWarnInfo': {
+    url: '/business/can_bus!listByCarId.do',
     method: 'get',
     isArray: false
   },
   // 车辆详情-画像
-  'getPortraitInfo': {
-    url: '/car/portraitInfo',
+  'getPortraitScore': {
+    url: '/business/device_stats!listByCarId.do',
     method: 'get',
     isArray: false
   },
-  // 车辆详情-位置
-  'getPositionByVin': {
-    url: '/car/locationInfo',
+  'getPortraitProvinceOrder': {
+    url: '/sas/capacity_daily!provinceTopAnalysis.do',
     method: 'get',
     isArray: false
   },
+  'getPortraitCityOrder': {
+    url: '/sas/capacity_daily!cityTopAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+  'getCitiesProportion': {
+    url: '/sas/car_tags!listByCar.do',
+    method: 'get',
+    isArray: false
+  },
+  'getPortraitStopPoints': {
+    url: '/sas/car_analysis!stopPointAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+  'getPortraitDayNight': {
+    url: '/sas/car_analysis!runPeriodAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+  'getPortraitWeather': {
+    url: '/sas/capacity_daily!weatherAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+  'getPortraitHumidity': {
+    url: '/sas/capacity_daily!humidityAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+  'getPortraitTemperature': {
+    url: '/sas/capacity_daily!temperatureAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+  'getPortraitAltitude': {
+    url: '/sas/car_analysis!elevationAnalysis.do',
+    method: 'get',
+    isArray: false
+  },
+
   // 车辆列表
   'getList': {
-    url: '/cars/list',
+    url: '/business/device!listBySQL.do',
     method: 'post',
     isArray: false
   },
@@ -66,7 +129,7 @@ const SERVER_API_ROUTE_MAP = {
   // 型号列表
   'getTypes': {
     url: '/common/car_type!combo.do',
-    method: 'post',
+    method: 'get',
     isArray: false
   },
   // 搜索列表
@@ -75,17 +138,17 @@ const SERVER_API_ROUTE_MAP = {
     method: 'post',
     isArray: false
   },
-  // 修改用户名
+  // 我的-修改用户名
   'updateUserName': {
-    url: '/profile/userInformation/update',
+    url: '/manage/user!save.do',
     method: 'post',
     isArray: false
   },
-  'uploadFile': {
-    url: '/profile/file!uploadFiles.do',
-    method: 'post',
-    isArray: false
-  },
+  // 'uploadFile': {
+  //   url: '/file!uploadFiles.do',
+  //   method: 'post',
+  //   isArray: false
+  // },
   'submitSuggest': {
     url: '/profile/suggest/submit',
     method: 'post',
@@ -98,7 +161,17 @@ const SERVER_API_ROUTE_MAP = {
   },
   // 行程
   'getTripIndex': {
-    url: '/trip/getTripIndex',
+    url: '/sas/car_analysis!findRunInfo.do',
+    method: 'get',
+    isArray: false
+  },
+  'getTripIndexCreated': {
+    url: '/business/car_info!get.do',
+    method: 'get',
+    isArray: false
+  },
+  'getTripIndexList': {
+    url: '/sas/car_analysis!listRunRecord.do',
     method: 'get',
     isArray: false
   },
@@ -107,18 +180,18 @@ const SERVER_API_ROUTE_MAP = {
     method: 'get',
     isArray: false
   },
-  'getTripDay': {
-    url: '/trip/getTripDay',
+  'getTripMonthList': {
+    url: '/business/location_summary!findByMonth.do',
     method: 'get',
     isArray: false
   },
   'getTripDayTime': {
-    url: '/trip/getTripDayTime',
+    url: '/business/location_summary!findRunDetailByDaily.do',
     method: 'get',
     isArray: false
   },
-  'getHomeInfo': {
-    url: '/profile/home/homeInfo',
+  'getTripDayMap': {
+    url: '/business/location!listByDid.do',
     method: 'get',
     isArray: false
   },
@@ -127,30 +200,32 @@ const SERVER_API_ROUTE_MAP = {
     method: 'post',
     isArray: false
   },
+  // 车辆概况
   'getCarSituation': {
-    url: '/profile/home/carSituation',
-    method: 'get',
+    url: '/business/server_summary!onlineInfo.do',
+    method: 'post',
     isArray: false
   },
   'getProvinceCarInfo': {
-    url: '/profile/home/provinceCarInfo',
-    method: 'get',
+    url: '/sas/market/device_monthly!findCountByProvince.do',
+    method: 'post',
     isArray: true
   },
   'getCarConfigurationInfo': {
-    url: '/profile/home/carConfigurationInfo',
+    url: '/business/component!installByCarBrandDate.do?dateType=2',
     method: 'get',
-    isArray: true
+    isArray: false
   },
   'getCarModelsInfo': {
-    url: '/profile/home/carModelsInfo',
-    method: 'get',
-    isArray: true
+    url: '/sas/car_operation!listGroupByCarType.do',
+    method: 'post',
+    isArray: false
   }
 };
 
 class AjaxProvider {
-  DOMAIN = 'http://localhost:9012';
+  // DOMAIN = 'http://localhost:9012';
+  DOMAIN = 'http://ov.ifoton.com.cn';
   // domain = 'https://www.sxszmj.com';
 
   // getStrLength(str, maxLen) {
@@ -167,18 +242,23 @@ class AjaxProvider {
   //   }
   //   return [realLength, temp];
 
-
   getApiInfo (_action) {
     let temp = SERVER_API_ROUTE_MAP[_action];
-
-    return {
-      url: this.DOMAIN + temp.url,
-      method: temp.method
+    let url = temp.url;
+    if (url.indexOf('?') === -1) {
+      url += '?IS_MOBILE=true';
+    } else {
+      url += '&IS_MOBILE=true';
     }
+    return {
+      url: this.DOMAIN + url,
+      method: temp.method,
+      isArray: temp.isArray
+    };
   }
 
   request (_action, _params) {
-    let routeConfig = SERVER_API_ROUTE_MAP[_action];
+    let routeConfig = this.getApiInfo(_action);
 
     if (!routeConfig) throw new Error('SERVER_API_ROUTE_MAP no action: ' + _action);
 
@@ -186,67 +266,62 @@ class AjaxProvider {
     Object.keys(_params).forEach(k => {
       if (_params[k] == null) delete _params[k];
     });
+    let header = {
+      'content-type': 'application/x-www-form-urlencoded' // 默认值
+    };
+
+    if (_action !== 'login') {
+      header.cookie = wepy.getStorageSync('cookie');
+      // header.referer = 'http://ov.ifoton.com.cn/index.jsp';
+    }
+
     return wepy.request({
-      url: `${this.DOMAIN}${routeConfig.url}`, // 仅为示例，并非真实的接口地址
+      url: routeConfig.url, // 仅为示例，并非真实的接口地址
       data: _params,
       method: routeConfig.method,
-      header: {
-        'ssr': wepy.getStorageSync('session'),
-        'content-type': 'application/x-www-form-urlencoded' // 默认值
+      header: header
+    }).then((response) => {
+      if (_action === 'login' && response.data && response.data.success) {
+        let cookie = response.header['Set-Cookie'];
+        let newCookie = '';
+        let newCookieMap = {};
+        cookie.split(';').forEach(item => {
+          if (item.indexOf('SESSION=') > -1 || item.indexOf('ck_username=') > -1 || item.indexOf('ck_company_code=') > -1) {
+            item = item.replace('Path=/,', '').trim();
+            newCookieMap[item.split('=')[0]] = item;
+          }
+        });
+        newCookie = [newCookieMap['ck_company_code'], 'ck_login_result=login', newCookieMap['ck_username'], newCookieMap['SESSION']].join('; ');
+        wepy.setStorageSync('cookie', newCookie);
       }
-    }).then(result => {
-      return result.data;
+
+      if (response.statusCode !== 200) {
+        if (response.statusCode === 403) {
+          response.data = {
+            code: 403,
+            msg: '重新登录'
+          };
+
+          // todo 跳转到登录页面
+        } else {
+          response.data = {
+            code: 0,
+            msg: response.data
+          };
+        }
+      } else if (response.data.success === false) {
+        response.data.code = 0;
+        response.data.msg = response.data.info;
+      } else {
+        response.data.code = 200;
+      }
+      return response.data;
     }, error => {
       if (routeConfig.isArray) {
-        return { total: 0, list: [] };
+        return { total: 0, list: [], code: 0, msg: error && error.errMsg ? error.errMsg : 'has error' };
       }
-      return { data: null, msg: error, code: 0 };
+      return { data: null, msg: error && error.errMsg ? error.errMsg : 'has error', code: 0 };
     });
-  }
-
-  async login () {
-    let userDetail;
-    let p = new Promise(resolve => {
-      wx.getUserInfo({
-        withCredentials: true,
-        success: async (detail) => {
-          userDetail = detail;
-          let login = await wepy.login();
-          userDetail.code = login.code;
-          let result = await this.request('generateSession', userDetail);
-          wepy.setStorageSync('session', result.data);
-          resolve(!!result.data);
-        },
-        fail: (error) => {
-          if (error.errMsg === 'getUserInfo:fail scope unauthorized') {
-            wepy.redirectTo({
-              url: '/pages/login'
-            });
-          }
-        }
-      });
-    });
-
-    let r = await Promise.all([p]);
-    return r[0];
-  }
-
-  async checkSession () {
-    let p = new Promise(resolve => {
-      wepy.checkSession().then(result => {
-        resolve(result);
-      }).catch(result => {
-        resolve(result);
-      });
-    });
-
-    let r = await Promise.all([p]);
-    return r[0] && r[0].errMsg && r[0].errMsg.indexOf('checkSession:fail') === -1;
-  }
-
-  async updateSession () {
-    let result = await this.request('updateSession');
-    return result.data;
   }
 }
 

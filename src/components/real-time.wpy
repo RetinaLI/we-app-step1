@@ -8,13 +8,13 @@
   image {
     &.icon_loca {
       margin-top: -6rpx;
-      width: 22rpx;
-      height: 28rpx;
+      width: 26rpx;
+      height: 32rpx;
     }
     &.icon_arrow_right {
       margin-left: 24rpx;
-      width: 12rpx;
-      height: 22rpx;
+      width: 16rpx;
+      height: 26rpx;
     }
   }
 
@@ -56,6 +56,7 @@
         height: 100%;
         &.icon-box {
           width: 88rpx;
+          min-width: 88rpx;
           text-align: center;
           justify-content: center;
         }
@@ -89,9 +90,6 @@
     .item {
       @h: 52rpx;
       margin-bottom: 20rpx;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
       width: 210rpx;
       height: @h;
       border-radius: 10rpx;
@@ -99,26 +97,26 @@
       .icon-box {
         width: 68rpx;
         height: @h;
-        align-items: center;
-        justify-content: center;
+        text-align: center;
         image {
-          width: 30rpx;
-          height: 32rpx;
+          width: 50rpx;
+          height: 52rpx;
+          vertical-align: middle;
         }
       }
       .txt-box {
-        align-items: center;
-        justify-content: flex-start;
         height: @h;
-        text {
-          font-size: 18rpx;
-          color: #999;
-          line-height: 1.3;
-        }
+        line-height: @h;
+        max-width: 140rpx;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 18rpx;
+        color: #999;
       }
       &.isRed {
         background-color: #ffe3e3;
-        .txt-box text {
+        .txt-box {
           color: #ff4646;
         }
       }
@@ -129,12 +127,9 @@
 .car-body .part-main .item,
 .wran .part-main .item {
   @h: 130rpx;
-  width: 300rpx;
+  width: 280rpx;
   height: @h;
   border-bottom: 1px solid #eee;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
   overflow: hidden;
 
   &:last-child {
@@ -142,33 +137,63 @@
   }
   .icon-box {
     width: 92rpx;
+    line-height: @h;
+    height: @h;
     text-align: center;
-    justify-content: center;
     image {
-      width: 40rpx;
-      height: 40rpx;
+      width: 50rpx;
+      height: 50rpx;
+      vertical-align: middle;
     }
   }
   .txt-box {
+    margin-top: 40rpx;
+    height: 70rpx;
+    line-height: 1;
     text-align: left;
-    flex-direction: column;
-    justify-content: center;
-    align-items: left;
     .t1 {
+      margin-bottom: 6rpx;
       width: 100%;
       color: #333;
       font-size: 24rpx;
     }
     .t2 {
+      display: inline;
       padding: 4rpx 14rpx;
       color: @normal;
       font-size: 16rpx;
       background-color: @normal-bg;
       border-radius: 16rpx;
       text-align: left;
-      &.theme-red {
-        background-color: rgba(255, 70, 70, 0.1);
-        color: #ff4646;
+      &.aa {
+        font-size: 24rpx;
+        &.off {
+          background-color: #F2F2F2;
+          color: #999;
+        }
+      }
+    }
+  }
+  &.wran-item {
+    line-height: @h;
+    .name {
+      max-width: 170rpx;
+      font-size: 24rpx;
+      color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .content {
+      >view {
+        height: 25rpx;
+        line-height: 25rpx;
+        display: inline-block;
+        padding: 4rpx 14rpx;
+        background-color: #FFECEC;
+        color: #FF4646;
+        font-size: 24rpx;
+        border-radius: 16rpx;
       }
     }
   }
@@ -184,27 +209,36 @@
   color: #333;
   font-size: 28rpx;
 }
-.wran .part-main .item:nth-last-child(2) {
-  border: 0;
+.wran .part-main .item{
+  &.lastOne:last-child {
+    border: 0;
+  }
+  &.lastTwo:nth-last-child(2) {
+    border: 0;
+  }
 }
+.wran {
+  margin-bottom: 0!important;
+  padding-bottom: 20rpx!important;
+}
+
 </style>
 
 <template lang="wxml">
-  <navigator url="location?vin={{vin}}">
+  <navigator url="location?did={{did}}&carId={{carId}}">
     <view class="location flex">
       <view class="t-box flex">
         <image class="icon_loca" src="/assets/cars/location.png"></image>
         <view class="t1">{{position.location}}</view>
       </view>
       <view class="t-box flex">
-        <view class="t2">{{position.timesBefore}}前</view>
+        <view class="t2" wx:if="{{position.timesBefore}}">{{position.timesBefore}}前</view>
         <image class="icon_arrow_right" src="/assets/realtime/arrow-right.png"></image>
       </view>
     </view>
   </navigator>
   <view class="part meter">
     <view class="dashboard" id="dashboard">
-      <!-- <canvas2 class="chart" @ready.user="onChartReady"></canvas2> -->
       <dashboard-chart class="chart" key="dashboard" :ec="ec"></dashboard-chart>
     </view>
     <view class="flex lg-items">
@@ -214,7 +248,7 @@
         </view>
         <view class="txt-box flex">
           <view class="t1">里程</view>
-          <view class="t2">{{dashBoard.mileage || 0}} KM</view>
+          <view class="t2">{{mileage ? mileage + ' KM' : '--'}}</view>
         </view>
       </view>
       <view class="item">
@@ -223,7 +257,7 @@
         </view>
         <view class="txt-box flex">
           <view class="t1">油量</view>
-          <view class="t2">{{dashBoard.remainderGas || 0}} L</view>
+          <view class="t2">{{ remainderGas ? remainderGas + ' L' : '--'}}</view>
         </view>
       </view>
       <view class="item">
@@ -232,18 +266,18 @@
         </view>
         <view class="txt-box flex">
           <view class="t1">水温</view>
-          <view class="t2">{{dashBoard.waterTemp || 0}} ℃</view>
+          <view class="t2">{{ waterTemp ? waterTemp + ' ℃' : '--'}}</view>
         </view>
       </view>
     </view>
     <view class="flex md-items">
       <repeat for="{{faults}}" key="index" index="index" item="item">
-        <view class="item {{item.isRed ? 'isRed' : ''}}">
-          <view class="icon-box flex">
+        <view class="item clearfix {{item.isRed ? 'isRed' : ''}}">
+          <view class="icon-box fl">
             <image src="{{item.isRed ? item.imgRed : item.img}}" mode="aspectFit"></image>
           </view>
-          <view class="txt-box flex">
-            <text>{{item.isRed ? item.txtRed : item.txt}}</text>
+          <view class="txt-box fl">
+            {{item.isRed ? item.txtRed : item.txt}}
           </view>
         </view>
       </repeat>
@@ -255,13 +289,13 @@
     </view>
     <view class="part-main">
       <repeat for="{{engine}}" key="index" index="index" item="item">
-        <view class="item">
-          <view class="icon-box flex">
+        <view class="item clearfix">
+          <view class="icon-box fl">
             <image src="{{item.img}}" mode="aspectFit" lazy-load="false"></image>
           </view>
-          <view class="txt-box flex">
+          <view class="txt-box fl">
             <view class="t1">{{item.name}}</view>
-            <view class="t2">{{item.value}}</view>
+            <view class="t2 aa">{{item.value}}</view>
           </view>
         </view>
       </repeat>
@@ -271,13 +305,13 @@
     <view class="part-title"><text>车体状态</text></view>
     <view class="part-main">
       <repeat for="{{carBody}}" key="index" index="index" item="item">
-        <view class="item">
-          <view class="icon-box flex">
+        <view class="item clearfix">
+          <view class="icon-box fl">
             <image src="{{item.isOn ? item.imgOn : item.imgOff}}" mode="aspectFit" lazy-load="false"></image>
           </view>
-          <view class="txt-box  flex">
+          <view class="txt-box fl">
             <view class="t1">{{item.name}}</view>
-            <view class="t2">{{item.value}}</view>
+            <view class="t2 aa {{item.isOn ? '' : 'off'}}">{{item.value}}</view>
           </view>
         </view>
       </repeat>
@@ -286,15 +320,14 @@
   <view class="part wran">
     <view class="part-title"><text>报警信息</text></view>
     <view class="part-main">
-      <block wx:if="wranInfo">
+      <block wx:if="{{wranInfo.length !== 0}}">
         <repeat for="{{wranInfo}}" key="index" index="index" item="item">
-          <view class="item">
-            <view class="icon-box flex">
-              <image src="{{item.img}}" mode="aspectFit" lazy-load="false"></image>
+          <view class="item wran-item clearfix {{remindOneOrTwo === 'one' ? 'lastOne' : 'lastTwo'}}">
+            <view class="name fl">
+              {{item.name}}
             </view>
-            <view class="txt-box flex">
-              <view class="t1">{{item.name}}</view>
-              <view class="t2 theme-red">{{item.value}}</view>
+            <view class="content fr">
+              <view>{{item.dcName}}</view>
             </view>
           </view>
         </repeat>
@@ -311,21 +344,23 @@ import wepy from 'wepy';
 import CarService from '../services/car';
 import ecCanvas from '../plugins/ec-canvas/ec-canvas';
 import * as echarts from '../plugins/ec-canvas/echarts';
-import Toast from '../lib/toast';
 
 export default class RealTime extends wepy.component {
   data = {
     position: {},
-    currentInfo: {},
     faults: [],
     engine: [],
     carBody: [],
     wranInfo: [],
-    dashBoard: {},
-    vin: '',
+    mileage: 0,
+    remainderGas: 0,
+    waterTemp: 0,
+    carId: '',
     ec: {
       lazyLoad: true
-    }
+    },
+    remindOneOrTwo: '',
+    did: ''
   }
 
   option = {};
@@ -337,47 +372,74 @@ export default class RealTime extends wepy.component {
     'dashboard-chart': ecCanvas
   }
 
-  events = {
-    'realTimeRender': async (vin) => {
-      wx.showLoading({title: '加载中'});
-      this.vin = vin;
-      let res = await CarService.getRealTimeInfo({vin});
-      wx.hideLoading();
-      if (!res.position) {
-        Toast.info('网络错误');
-        return;
-      }
-      Toast.success('');
-      let pos = res.position;
-      let timesBefore = Math.floor((Date.now() - pos.timesBefore) / 1000 / 60);   // 分钟
-      if (timesBefore < 1) {
+  async getRealTimeInfo() {
+    let res = await CarService.getRealTimeInfo({carId: this.carId});
+    this.faults = res.faults;
+    this.engine = res.engine;
+    this.carBody = res.carBodyInfo;
+    this.remainderGas = Math.round(res.dashBoard.find(v => v.name === '油量').value);
+    this.waterTemp = Math.round(res.dashBoard.find(v => v.name === '水温').value);
+    let speedVal = Math.round(res.dashBoard.find(v => v.name === '速度').value);
+    let roundVal = Math.round(res.dashBoard.find(v => v.name === '转速').value);
+    let oilVal = Math.round(res.dashBoard.find(v => v.name === '油耗').value);
+    let speedDeg = this.numberToAngle('speed', speedVal);
+    let roundDeg = this.numberToAngle('round', roundVal);
+    let oilDeg = this.numberToAngle('oil', oilVal);
+    this.$apply();
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.bindOption(speedVal, roundVal, oilVal, speedDeg, roundDeg, oilDeg);
+    this.bindChart();
+  }
+
+  async getCarDetailInfo() {
+    let r = await CarService.getCarDetailInfo({did: this.did});
+    let timesBefore = '';
+    if (r.lastTimeShow) {
+      let s = new Date(r.lastTimeShow.replace(/-/g, '/')).getTime();
+      let t = Math.floor((Date.now() - s) / 1000 / 60);   // 分钟
+      if (t < 1) {
         timesBefore = '1分钟';
-      } else if (timesBefore > 60) {
-        timesBefore = Math.round(timesBefore / 60) + '小时';
+      } else if (t > 60) {
+        timesBefore = Math.round(t / 60) + '小时';
       } else {
-        timesBefore += '分钟';
+        timesBefore += t + '分钟';
       }
-      this.position = {
-        location: pos.location,
-        timesBefore: timesBefore
-      };
-      this.currentInfo = res.currentInfo;
-      this.faults = res.faults;
-      this.engine = res.engine;
-      this.carBody = res.carBody;
-      this.wranInfo = res.wranInfo;
-      this.dashBoard = res.dashBoard;
-      let speedVal = res.dashBoard.speed;
-      let roundVal = res.dashBoard.round;
-      let oilVal = res.dashBoard.expendGas;
-      let speedDeg = this.numberToAngle('speed', speedVal);
-      let roundDeg = this.numberToAngle('round', roundVal);
-      let oilDeg = this.numberToAngle('oil', oilVal);
+    } else {
+      timesBefore = '';
+    }
+    this.position = {
+      location: r.address,
+      timesBefore: timesBefore
+    };
+    this.mileage = Math.round(r.mileage / 1000);
+    this.$apply();
+    console.info('aaa:' + this.position.timesBefore);
+
+  }
+
+  async getWarnInfo() {
+    let res = await CarService.getWarnInfo({carId: this.carId, typeCode: 2004});
+    this.wranInfo = res.list;
+
+    this.remindOneOrTwo = res.list.length % 2 === 1 ? 'one' : 'two';
+    this.$apply();
+  }
+
+  events = {
+    'realTimeRender': async (carId, did) => {
+      if (carId === this.carId) return;
+      this.carId = carId;
+      this.did = did;
       this.$apply();
-      clearTimeout(this.timer);
-      this.timer = null;
-      this.bindOption(speedVal, roundVal, oilVal, speedDeg, roundDeg, oilDeg);
-      this.bindChart();
+      this.getRealTimeInfo();
+      this.getCarDetailInfo();
+      this.getWarnInfo();
+    },
+    'resetCarIdDid': () => {
+      this.carId = '';
+      this.did = '';
+      this.$apply();
     }
   }
 
@@ -392,7 +454,7 @@ export default class RealTime extends wepy.component {
     const angleMaxMap = {
       speed: 220,
       round: 8000,
-      oil: 30
+      oil: 120
     };
     let max = angleMaxMap[type];
     if (!max) return;
@@ -405,6 +467,10 @@ export default class RealTime extends wepy.component {
   }
 
   bindOption(speedVal = 0, roundVal = 0, oilVal = 0, speedDeg = 225, roundDeg = 225, oilDeg = 225) {
+    if (oilVal > 120) {
+      oilVal = '--';
+      oilDeg = 225;
+    }
     this.option = {
       backgroundColor: 'rgba(0,0,0,0)',
       series: [
@@ -419,27 +485,27 @@ export default class RealTime extends wepy.component {
           axisLine: {            // 坐标轴线
             lineStyle: {       // 属性lineStyle控制线条样式
               width: 0,
-              color: [[1, '#4F91FF']]  // 指针颜色
+              color: [[1, '#4F91FF']]
             }
           },
           axisLabel: {            // 坐标轴小标记
             show: false
           },
           axisTick: {            // 坐标轴小标记
-            length: 5,        // 属性length控制线长
+            length: 2,        // 属性length控制线长
             lineStyle: {       // 属性lineStyle控制线条样式
               color: '#999',
             }
           },
           splitLine: {           // 分隔线
-            length: 10,         // 属性length控制线长
+            length: 5,         // 属性length控制线长
             lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-              width: 2,
+              width: 1,
               color: '#999'
             }
           },
           pointer: {           // 分隔线
-            width: 2,
+            width: 1,
             color: '#4475FD'
           },
           title: {
@@ -452,7 +518,7 @@ export default class RealTime extends wepy.component {
             }
           },
           detail: {
-            offsetCenter: [0, '45%'],       // x, y，单位px
+            offsetCenter: [0, '60%'],       // x, y，单位px
             textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
               fontWeight: 'bolder',
               fontSize: 24,
@@ -477,7 +543,7 @@ export default class RealTime extends wepy.component {
           max: 8000,
           center: ['17%', '53%'],
           splitNumber: 8,
-          radius: '45%',
+          radius: '47%',
           axisLine: {            // 坐标轴线
             lineStyle: {       // 属性lineStyle控制线条样式
               width: 0,
@@ -488,33 +554,33 @@ export default class RealTime extends wepy.component {
             show: false
           },
           axisTick: {            // 坐标轴小标记
-            length: 5,        // 属性length控制线长
+            length: 2,        // 属性length控制线长
             lineStyle: {       // 属性lineStyle控制线条样式
               color: '#999',
             }
           },
           splitLine: {           // 分隔线
-            length: 10,         // 属性length控制线长
+            length: 5,         // 属性length控制线长
             lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-              width: 2,
+              width: 1,
               color: '#999'
             }
           },
           pointer: {           // 分隔线
-            width: 2,
+            width: 1,
             color: '#4475FD'
           },
           title: {
             textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
               fontSize: 10,
               color: '#999',
-              padding: [3, 6],
+              padding: [2, 6],
               backgroundColor: '#F2F2F2',
               borderRadius: 7
             }
           },
           detail: {
-            offsetCenter: [0, '40%'],       // x, y，单位px
+            offsetCenter: [0, '60%'],       // x, y，单位px
             textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
               fontWeight: 'bolder',
               fontSize: 17,
@@ -536,10 +602,10 @@ export default class RealTime extends wepy.component {
           name: '瞬时油耗',
           type: 'gauge',
           min: 0,
-          max: 30,
+          max: 120,
           center: ['83%', '53%'],
-          splitNumber: 10,
-          radius: '45%',
+          radius: '47%',
+          splitNumber: 7,
           axisLine: {            // 坐标轴线
             lineStyle: {       // 属性lineStyle控制线条样式
               width: 0,
@@ -550,20 +616,20 @@ export default class RealTime extends wepy.component {
             show: false
           },
           axisTick: {            // 坐标轴小标记
-            length: 5,        // 属性length控制线长
+            length: 2,        // 属性length控制线长
             lineStyle: {       // 属性lineStyle控制线条样式
               color: '#999',
             }
           },
           splitLine: {           // 分隔线
-            length: 10,         // 属性length控制线长
+            length: 5,         // 属性length控制线长
             lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-              width: 2,
+              width: 1,
               color: '#999'
             }
           },
-          pointer: {           // 分隔线
-            width: 2,
+          pointer: {           // 指针
+            width: 1,
             color: '#4475FD'
           },
           title: {
@@ -576,14 +642,16 @@ export default class RealTime extends wepy.component {
             }
           },
           detail: {
-            offsetCenter: [0, '40%'],       // x, y，单位px
+            offsetCenter: [0, '60%'],       // x, y，单位px
             textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
               fontWeight: 'bolder',
               fontSize: 17,
               color: '#444'
             },
             formatter: function (v) {
-              return [v, '{x|KM/L}'].join('\n');
+              let a = '--';
+              if (v) a = v;
+              return [a, '{x|KM/L}'].join('\n');
             },
             rich: {
               x: {
@@ -637,7 +705,7 @@ export default class RealTime extends wepy.component {
           endAngle: roundDeg,
           center: ['17%', '53%'],
           splitNumber: 0,
-          radius: '45%',
+          radius: '48%',
           axisLine: {            // 坐标轴线
             lineStyle: {
               width: 2,
@@ -667,12 +735,10 @@ export default class RealTime extends wepy.component {
         {
           name: '油耗圆环',
           type: 'gauge',
-          min: 0,
-          max: 30,
           endAngle: oilDeg,
           center: ['83%', '53%'],
           splitNumber: 0,
-          radius: '45%',
+          radius: '48%',
           axisLine: {            // 坐标轴线
             lineStyle: {
               width: 2,

@@ -31,13 +31,16 @@
       height: rpx(240);
     }
     .cities {
-      flex-wrap: wrap;
-      justify-content: space-around;
+      width: 100%;
       & > .city {
         width: 33%;
-        justify-content: flex-start;
-        margin-bottom: rpx(13);
+        margin-bottom: rpx(5);
+        float: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         .num {
+          display: inline-block;
           width: rpx(28);
           height: rpx(17);
           line-height: rpx(17);
@@ -112,16 +115,16 @@
       <text class="part-title">车辆足迹</text>
       <view class="part-main">
         <view class="title">车辆经过<text>{{beenPlace.province}}</text>个省份、<text>{{beenPlace.cities}}</text>个城市</view>
-        <view class="title">超过<text>{{beenPlace.raty}}</text>的车辆</view>
+        <!--<view class="title">超过<text>{{beenPlace.raty}}%</text>的车辆</view>-->
         <map-chart class="mapchart" @ready.user="onChartMapReady"></map-chart>
-        <view class="cities flex">
+        <view class="cities clearfix">
           <repeat for="{{citiesOrder}}" key="index" index="index" item="item">
-            <view class="city flex">
-              <view class="num {{index < 3 ? 'firstline' : ''}}">
+            <view class="city">
+              <text class="num {{index < 3 ? 'firstline' : ''}}">
                 <text wx:if="{{index < 9}}">0</text>
                 <text>{{(index + 1) + '.'}}</text>
-              </view>
-              <view class="name">{{item}}</view>
+              </text>
+              <text class="name">{{item.city}}</text>
             </view>
           </repeat>
         </view>
@@ -142,14 +145,15 @@
         <view class="days flex">
           <repeat for="{{days + monthStartDate}}" key="index" index="index"
                   item="date">
-            <view class="day {{index >= monthStartDate ? 'run' : ''}}"
-                  @tap="navigatorToDay({{index - monthStartDate + 1}})">
+            <view class="day {{monthRunDay[index] ? 'run' : ''}}"
+                  @tap="navigatorToDay({{monthRunDay[index]}})">
               <text wx:if="{{index >= monthStartDate}}">{{index - monthStartDate + 1}}</text>
             </view>
           </repeat>
         </view>
       </view>
     </view>
+    <noMore></noMore>
   </view>
 </template>
 
@@ -160,7 +164,10 @@
   import { geoJson } from '../../plugins/ec-canvas/china';
   import OperationSituation from '../../components/trip/operation-situation';
   import monthDay from '../../lib/month';
+  import numToFixed from '../../lib/numToFixed';
   import tripService from '../../services/trip';
+  import CarService from '../../services/car';
+  import NoMore from '../../components/no-more';
 
   export default class TripMonth extends wepy.page {
     data = {
@@ -197,46 +204,63 @@
           val: 0,
           unit: 'km/h',
         },
-        {
-          img: '../../assets/trip/oper-icon-07.png',
-          title: '车辆损耗',
-          val: 0,
-          unit: '%',
-        },
+        // {
+        //   img: '../../assets/trip/oper-icon-07.png',
+        //   title: '车辆损耗',
+        //   val: 0,
+        //   unit: '%',
+        // },
       ],
       days: [],
+      monthRunDay: [],
       monthStartDate: 0,
-      beenPlace: {},
-      citiesOrder: []
+      beenPlace: {
+        cities: 0,
+        province: 0,
+        raty: 0,
+      },
+      citiesOrder: [],
+      carId: '',
+      framenum: ''
     };
     components = {
       operationSituation: OperationSituation,
       'map-chart': ecCanvas,
+      noMore: NoMore
     };
 
     methods = {
-      navigatorToDay (day) {
-        if (day > 0) {
-          day = day[1] ? day : '0' + day;
+      navigatorToDay (item) {
+        if (item) {
           wepy.navigateTo({
-            url: `./trip-day?y=${this.year}-${this.month}-${day}`
+            url: `./trip-day?y=${item.dataTime.replace(/\s.+/, '')}&carId=${this.carId}&mileage=${item.mileage}&fuelConsumption=${item.fuelConsumption}&workTimeInSeconds=${item.workTimeInSeconds}&framenum=${this.framenum}&avgVelocity=${item.avgVelocity}&maxVelocity=${item.maxVelocity}`
           });
         }
       },
       async onChartMapReady(canvas, width, height, callback) {
-        let {data, code} = await tripService.getTripMonth({
-          vin: '132132',
-          date: `${this.year}-${this.month}`
+        // 获取经过的省份
+        let city = CarService.getPortraitProvinceOrder({
+          carId: this.carId
         });
-        if (code === 1) {
-          this.operations[0].val = data.operations.mileage;
-          this.operations[1].val = data.operations.time;
-          this.operations[2].val = data.operations.dirveDay;
-          this.operations[3].val = data.operations.runDay;
-          this.operations[4].val = data.operations.avgSpeed;
-          this.operations[5].val = data.operations.loss;
-          this.beenPlace = data.beenPlace;   // 经过的省份、城市、比例
-          this.citiesOrder = data.citiesOrder;   // 经过的城市
+        // 获取城市排行
+        let order = CarService.getPortraitCityOrder({
+          carId: this.carId
+        });
+        // 获取超过百分比
+        let per = CarService.getCitiesProportion({
+          carId: this.carId
+        });
+        let data = await Promise.all([city, order, per]);
+        if (data[0].list) {
+          let newList = data[0].list.sort((a, b) => {
+            return b.provincecount - a.provincecount;
+          }).map(ele => {
+            return {
+              province: ele.province,
+              value: ele.provincecount
+            };
+          });
+          this.beenPlace.province = data[0].list.length;   // 经过的省份、城市、比例
           this.$apply();
           this.chartMap = echarts.init(canvas, null, {
             width: width,
@@ -244,24 +268,63 @@
           });
           canvas.setChart(this.chartMap);
           callback(this.chartMap);
-          this.bindChartMap(data.footprint);
+          this.bindChartMap(newList);
+        }
+        if (data[1].list) {
+          data[1].list.sort((a, b) => {
+            return b.count - a.count;
+          });
+          this.beenPlace.cities = data[1].list.length;   // 经过的省份、城市、比例
+          this.citiesOrder = data[1].list;   // 经过的城市
+          this.$apply();
+        }
+        if (data[2].map) {
+          this.beenPlace.raty = numToFixed(data[2].map.citiesProportion, 1);
+          this.$apply();
         }
       }
     };
 
     onLoad(option) {
-      let year = option.y.split('-')[0];
-      let month = option.y.split('-')[1];
+      this.year = option.y.split('-')[0];
+      this.month = option.y.split('-')[1];
       wepy.setNavigationBarTitle({
-        title: option.y.replace('-', '年') + '月行程',
+        title: `${this.year}年${this.month}月行程`,
       });
-      this.year = year;
-      this.month = month;
-      this.getMonth(this.year, this.month);
+      this.carId = option.carId;
+      this.framenum = option.framenum;
+      this.getMonthList(this.year, this.month, this.carId);
+      this.operations[0].val = option.mileage || 0;
+      this.operations[1].val = option.workTimeInSeconds || 0;
+      this.operations[2].val = option.workDays || 0;
+      this.operations[3].val = option.workDays || 0;
+      this.operations[4].val = option.avgVelocity || 0;
+      // this.operations[5].val = option.loss || 0;
+      this.$apply();
     }
 
     onUnload() {
       this.$broadcast('destroy-echarts');
+    }
+    async getMonthList(year, month, carId) {
+      this.getMonth(year, month);
+      let arr = new Array(this.days + this.monthStartDate);
+      let data = await tripService.getTripMonthList({
+        carId,
+        month: `${year}${month}`
+      });
+      if (data.code === 200 && data.dailyList.length) {
+        data.dailyList.map(ele => {
+          let index = parseInt(ele.dataTime.replace(/\s.+/, '').replace(/.+-/, ''));
+          arr[index + this.monthStartDate - 1] = Object.assign(ele, {
+            mileage: numToFixed(ele.mileage / 1000, 1),
+            avgVelocity: numToFixed(ele.avgVelocity, 1),
+            maxVelocity: numToFixed(ele.maxVelocity, 1)
+          });
+        });
+      }
+      this.monthRunDay = arr;
+      this.$apply();
     }
 
     bindChartMap(footprint) {
@@ -330,6 +393,7 @@
       // console.log(monthStartDate, days);
       this.monthStartDate = monthStartDate;
       this.days = days;
+      this.$apply();
     }
 
     // 改字段名

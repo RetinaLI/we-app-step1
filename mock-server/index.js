@@ -26,15 +26,15 @@ router.get(URL_PREFIXERS + '/test', (req, res) => {
   res.status(200).send('ok, come on!');
 });
 
-router.post('/passport/regist', (req, res) => {
-  res.status(200).send({ code: 200 });
+router.post('/security/login!loginNoCaptcha.do', (req, res) => {
+  res.status(200).send(ControllerMap.profile.login(req.body));
 });
 
-router.get('/profile/info', (req, res) => {
+router.get('/manage/user!getSelf.do', (req, res) => {
   res.status(200).send(ControllerMap.profile.getCurrentUser());
 });
 
-router.get('/profile/platform/list', (req, res) => {
+router.get('/manage/user!listGroupUsers.do', (req, res) => {
   res.status(200).send(ControllerMap.profile.getPlatforms());
 });
 
@@ -52,27 +52,54 @@ router.get('/report/list', (req, res) => {
   }, 3000);
 
 });
-
-router.get('/car/realTimeInfo', (req, res) => {
+// 车辆详情-实时
+router.get('/business/can_bus!listAnalysisCodes.do', (req, res) => {
   res.status(200).send(ControllerMap.car.getRealTimeInfo());
-  /* setTimeout(() => {
-    res.status(200).send(ControllerMap.car.getRealTimeInfo());
-  }, 5000); */
 });
-
-router.get('/car/portraitInfo', (req, res) => {
-  res.status(200).send(ControllerMap.car.getPortraitInfo());
-  /* setTimeout(() => {
-    res.status(200).send(ControllerMap.car.getPortraitInfo());
-  }, 5000); */
+router.get('/business/can_bus!listByCarId.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getWarnInfo());
+});
+router.get('/business/device!findByDid.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getCarDetailInfo());
+});
+// 车辆详情-画像
+router.get('/business/device_stats!listByCarId.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitScore());
+});
+router.get('/sas/capacity_daily!provinceTopAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitProvinceOrder());
+});
+router.get('/sas/capacity_daily!cityTopAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitCityOrder());
+});
+router.get('/sas/car_tags!listByCar.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getCitiesProportion());
+});
+router.get('/sas/car_analysis!stopPointAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitStopPoints());
+});
+router.get('/sas/car_analysis!runPeriodAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitDayNight());
+});
+router.get('/sas/capacity_daily!weatherAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitWeather());
+});
+router.get('/sas/capacity_daily!humidityAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitHumidity());
+});
+router.get('/sas/capacity_daily!temperatureAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitTemperature());
+});
+router.get('/sas/car_analysis!elevationAnalysis.do', (req, res) => {
+  res.status(200).send(ControllerMap.car.getPortraitAltitude());
 });
 
 router.get('/car/locationInfo', (req, res) => {
-  res.status(200).send(ControllerMap.car.getPositionByVin());
+  res.status(200).send(ControllerMap.car.getPortraitAltitude());
 });
 
 // 车辆列表
-router.post('/cars/list', (req, res) => {
+router.post('/business/device!listBySQL.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.car.getList());
   }, 3000);
@@ -86,7 +113,7 @@ router.get('/common/car_brand!combo.do', (req, res) => {
 });
 
 // 型号列表
-router.post('/common/car_type!combo.do', (req, res) => {
+router.get('/common/car_type!combo.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.car.getTypes());
   }, 3000);
@@ -94,73 +121,84 @@ router.post('/common/car_type!combo.do', (req, res) => {
 
 // 搜索列表
 router.post('/search', (req, res) => {
-  setTimeout(() => {
-    res.status(200).send(ControllerMap.car.getSearchList());
-  }, 3000);
+  // setTimeout(() => {
+  res.status(200).send(ControllerMap.car.getSearchList());
+  // }, 3000);
 });
 
-router.post('/profile/userInformation/update', (req, res) => {
-  res.status(200).send(ControllerMap.profile.updateUserName());
-});
-
-router.post('/profile/suggest/submit', (req, res) => {
-  setTimeout(() => {
-    res.status(200).send(ControllerMap.profile.submitSuggest());
-  }, 4000);
-});
 // 行程
-router.get('/trip/getTripIndex', (req, res) => {
+router.get('/sas/car_analysis!findRunInfo.do', (req, res) => {
+  res.status(200).send(ControllerMap.trip.getTripIndex());
+});
+router.get('/business/car_info!get.do', (req, res) => {
+  res.status(200).send(ControllerMap.trip.getTripIndexCreated());
+});
+router.get('/sas/car_analysis!listRunRecord.do', (req, res) => {
   res.status(200).send(ControllerMap.trip.getTripIndex());
 });
 router.get('/trip/getTripMonth', (req, res) => {
   res.status(200).send(ControllerMap.trip.getTripMonth());
 });
-router.get('/trip/getTripDay', (req, res) => {
-  res.status(200).send(ControllerMap.trip.getTripDay());
+router.get('/business/location_summary!findByMonth.do', (req, res) => {
+  res.status(200).send(ControllerMap.trip.getTripMonthList());
 });
-router.get('/trip/getTripDayTime', (req, res) => {
+router.get('/business/location_summary!findRunDetailByDaily.do', (req, res) => {
   res.status(200).send(ControllerMap.trip.getTripDayTime());
+});
+
+router.get('/business/location!listByDid.do', (req, res) => {
+  res.status(200).send(ControllerMap.trip.getTripDayMap());
 });
 router.get('/profile/home/homeInfo', (req, res) => {
   res.status(200).send(ControllerMap.profile.getHomeInfo());
+});
+
+// 我的个人信息页面
+router.post('/manage/user!save.do', (req, res) => {
+  setTimeout(() => {
+    res.status(200).send(ControllerMap.profile.updateUserName());
+  }, 4000);
+});
+router.post('/profile/suggest/submit', (req, res) => {
+  setTimeout(() => {
+    res.status(200).send(ControllerMap.profile.submitSuggest());
+  }, 4000);
 });
 router.get('/profile/suggest/getSubscribeConfig', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.profile.getSubscribeConfig());
   }, 4000);
 });
-
 router.post('/profile/suggest/editSubscribeConfig', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.profile.editSubscribeConfig());
   }, 4000);
 });
-
-router.get('/profile/home/carSituation', (req, res) => {
+// 首页
+router.post('/business/server_summary!onlineInfo.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.profile.getCarSituation());
   }, 4000);
 });
-
-router.get('/profile/home/provinceCarInfo', (req, res) => {
+router.post('/sas/market/device_monthly!findCountByProvince.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.profile.getProvinceCarInfo());
-  }, 4000);
+  }, 3000);
 });
 
-router.get('/profile/home/carConfigurationInfo', (req, res) => {
+router.get('/business/component!installByCarBrandDate.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.profile.getCarConfigurationInfo());
   }, 4000);
 });
 
-router.get('/profile/home/carModelsInfo', (req, res) => {
+router.post('/sas/car_operation!listGroupByCarType.do', (req, res) => {
   setTimeout(() => {
     res.status(200).send(ControllerMap.profile.getCarModelsInfo());
   }, 4000);
 });
 
-router.post('/profile/file!uploadFiles.do', (req, res) => {
+// router.post('/file!uploadFiles.do', (req, res) => {
   // var form = new multiparty.Form({ uploadDir: './public/img/' });
   //
   // // 上传完成后处理
@@ -184,11 +222,11 @@ router.post('/profile/file!uploadFiles.do', (req, res) => {
   //       }
   //     });
   //   }
-    setTimeout(() => {
-      res.status(200).send(ControllerMap.profile.uploadFile());
-    }, 4000);
+  //   setTimeout(() => {
+  //     res.status(200).send(ControllerMap.profile.uploadFile());
+  //   }, 4000);
   // });
-});
+// });
 
 app.use(router);
 app.listen(9012, () => {

@@ -57,6 +57,8 @@ export default class extends wepy.app {
       'pages/vehicle-internet',
       'pages/mine',
 
+      // 车辆查询
+      'pages/search',
       // 我的
       'pages/profile/platform',
       'pages/profile/user-information',
@@ -127,7 +129,7 @@ export default class extends wepy.app {
       'downloadFile': 10000
     },
     'tabBar': {
-      'color': '#686868',
+      'color': '#999999',
       'selectedColor': '#4475FD',
       list: [{
         pagePath: 'pages/index',

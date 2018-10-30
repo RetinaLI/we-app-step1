@@ -1,4 +1,4 @@
-<style lang="less">
+<style lang="less" scoped>
 @import "../style/global.less";
 
   .content {
@@ -6,11 +6,11 @@
     width: 100%;
     height: 420rpx;
     background-color: #fff;
-    padding: 30rpx 36rpx;
+    padding: 10rpx 36rpx 30rpx;
     >view {
       padding: 0 20rpx;
     }
-    .vin {
+    .carId {
       font-size: 40rpx;
       color: #333;
       line-height: 100rpx;
@@ -60,32 +60,32 @@
   <view>
     <map id="location" longitude="{{carInfo.longitude}}" latitude="{{carInfo.latitude}}" markers="{{marker}}" scale="14" show-location style="width: 100%; height: 780rpx;"></map>
     <view class="content" wx:if="{{carInfo}}">
-      <view class="vin">{{carInfo.vin}}</view>
+      <view class="carId">{{carInfo.vin}}</view>
       <view class="flex">
-        <view class="lpn">{{carInfo.lpn}}</view>
-        <view class="stop-times">停车{{carInfo.stopTimes}}</view>
+        <view class="lpn" wx:if="{{carInfo.lpn}}">{{carInfo.lpn}}</view>
+        <view class="stop-times" wx:if="{{carInfo.acc == 0}}">停车{{carInfo.convertTimesBefore || '--'}}</view>
       </view>
       <view class="flex box">
         <view class="acc">
           <text class="label">ACC：</text>
-          <text class="value">{{carInfo.acc}}</text>
+          <text class="value">{{carInfo.acc == 0 ? 'OFF' : 'ON'}}</text>
         </view>
         <view class="speed">
           <text class="label">速度：</text>
-          <text class="value">{{carInfo.speed}}km/h</text>
+          <text class="value">{{ carInfo.acc == 1 ? carInfo.speed + 'km/h' : '--'}}</text>
         </view>
-        <view class="gps">
+        <view class="gps" wx:if="{{carInfo.gps}}">
           <text class="label">GPS定位：</text>
-          <text class="value">{{carInfo.gps}}</text>
+          <text class="value">{{carInfo.gps || '--'}}</text>
         </view>
       </view>
       <view class="times-before">
         <text class="label">最后定位时间：</text>
-        <text class="value">{{carInfo.timesBefore}}</text>
+        <text class="value">{{carInfo.lastTimeShow || '--'}}</text>
       </view>
       <view class="car-position">
         <text class="label">车辆地址：</text>
-        <text class="value">{{carInfo.position}}</text>
+        <text class="value">{{carInfo.address || '--'}}</text>
       </view>
     </view>
   </view>
@@ -93,11 +93,12 @@
 <script>
 import wepy from 'wepy';
 import CarService from '../services/car';
-import Toast from '../lib/toast';
 
 export default class Location extends wepy.page {
   config = {
-    navigationBarTitleText: '位置详情'
+    navigationBarTitleText: '位置详情',
+    enablePullDownRefresh: false,
+    disableScroll: true
   }
   data = {
     carInfo: null,
@@ -111,26 +112,20 @@ export default class Location extends wepy.page {
     }],
   }
   async onLoad (params) {
-    wx.showLoading({title: '加载中'});
-
-    let vin = params.vin;
-    let res = await CarService.getPositionByVin({vin});
-    wx.hideLoading();
-    if (!res.timesBefore) {
-      Toast.info('网络错误');
-      return;
-    }
-    Toast.success('');
-
-    let convertTimesBefore = Math.floor((Date.now() - res.timesBefore) / 1000 / 60);   // 分钟
+    let did = params.did;
+    let carId = params.carId;
+    let res = await CarService.getLocationPageInfo({did, carId});
+    console.log(res);
+    let lastTime = new Date(res.lastTimeShow.replace(/-/g, '/')).getTime();
+    let convertTimesBefore = Math.floor((Date.now() - lastTime) / 1000 / 60);   // 分钟
     if (convertTimesBefore < 1) {
       convertTimesBefore = '1分钟';
     } else if (convertTimesBefore > 60) {
       convertTimesBefore = Math.round(convertTimesBefore / 60) + '小时';
     } else {
-      convertTimesBefore += '分钟';
+      convertTimesBefore += convertTimesBefore + '分钟';
     }
-    res.timesBefore = convertTimesBefore;
+    res.convertTimesBefore = convertTimesBefore;
     this.carInfo = res;
     this.marker[0].longitude = Number(res.longitude);
     this.marker[0].latitude = Number(res.latitude);

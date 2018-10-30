@@ -56,7 +56,7 @@
           color: #4475FD;
           font-size: rpx(20);
           font-weight: 600;
-          margin-right: rpx(11);
+          margin-right: rpx(8);
           .month-num {
           }
           .month {
@@ -72,11 +72,14 @@
           .just-right {
             justify-content: flex-end;
           }
-          .col-3 {
-            flex: 0 0 28%;
-            align-items: center;
-            box-sizing: border-box;
-            padding-right: rpx(10);
+          .year-list-item-content-left {
+            flex: 1;
+            .col-3 {
+              flex: 0 0 33.3%;
+              align-items: center;
+              box-sizing: border-box;
+              padding-right: rpx(5);
+            }
           }
           .year-icon {
             margin-right: rpx(10);
@@ -113,6 +116,13 @@
       }
     }
   }
+  .no-data {
+    font-size: rpx(14);
+    color: #999;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+  }
 </style>
 <template>
   <view class="trip">
@@ -126,44 +136,47 @@
       <text class="part-title">行程统计</text>
       <view class="year-top-btn flex">
         <span class="year-btn" @tap="prevYear"><i
-          class="foton-ui arr-icon left {{monthesIndex === 0 && 'opacity2'}}"></i></span>
-        <text class="year-text">{{monthes[monthesIndex].year}}年</text>
-        <span class="year-btn" @tap="nextYear"><i class="foton-ui arr-icon right {{monthesIndex + 1 === monthes.length && 'opacity2'}}"></i></span>
+          class="foton-ui arr-icon left {{year === currentYear && 'opacity2'}}"></i></span>
+        <text class="year-text">{{currentYear}}年</text>
+        <span class="year-btn" @tap="nextYear"><i class="foton-ui arr-icon right {{currentYear === createdYear && 'opacity2'}}"></i></span>
       </view>
-      <view class="year-list">
-        <text class="line" wx:if="{{monthes[monthesIndex].date.length > 1}}"
-              style="height:{{monthes[monthesIndex].date.length * 140 - 100}}rpx; top: 50rpx"></text>
-        <repeat for="{{monthes[monthesIndex].date}}" key="index" index="index" item="item">
-          <view class="year-list-item flex" @tap="navigatorToMonth({{item.calendar}})">
+      <view class="no-data" wx:if="{{monthes.length <= 0}}">
+        <text>暂无数据</text>
+      </view>
+      <view class="year-list" wx:if="{{monthes.length > 0}}">
+        <text class="line" wx:if="{{monthes.length > 1}}"
+              style="height:{{monthes.length * 140 - 100}}rpx; top: 50rpx"></text>
+        <repeat for="{{monthes}}" key="index" index="index" item="item">
+          <view class="year-list-item flex" @tap="navigatorToMonth({{item}})">
             <view class="year-list-item-month">
-              <text class="month-num">{{(monthes[monthesIndex].date.length - index) > 9 ?
-                (monthes[monthesIndex].date.length - index) : '0' + (monthes[monthesIndex].date.length - index)}}
-              </text>
+              <text class="month-num">{{item.month}}</text>
               <text class="month">月</text>
             </view>
             <view class="year-list-item-content flex">
-              <view class="col-3 flex">
-                <image class="year-icon year-icon-01"
-                       src="../../assets/trip/statistics-01.png"></image>
-                <view class="year-icon-text">
-                  <text>{{item.onLine}}天</text>
-                  <text>在线</text>
+              <view class="year-list-item-content-left flex">
+                <view class="col-3 flex">
+                  <image class="year-icon year-icon-01"
+                         src="../../assets/trip/statistics-01.png"></image>
+                  <view class="year-icon-text">
+                    <text>{{item.workDays || 0}}天</text>
+                    <text>在线</text>
+                  </view>
                 </view>
-              </view>
-              <view class="col-3 flex">
-                <image class="year-icon year-icon-02"
-                       src="../../assets/trip/statistics-02.png"></image>
-                <view class="year-icon-text">
-                  <text>{{item.mileage}}km</text>
-                  <text>里程</text>
+                <view class="col-3 flex">
+                  <image class="year-icon year-icon-02"
+                         src="../../assets/trip/statistics-02.png"></image>
+                  <view class="year-icon-text">
+                    <text>{{item.mileage || 0}}km</text>
+                    <text>里程</text>
+                  </view>
                 </view>
-              </view>
-              <view class="col-3 flex">
-                <image class="year-icon year-icon-03"
-                       src="../../assets/trip/statistics-03.png"></image>
-                <view class="year-icon-text">
-                  <text>{{item.oil}}L</text>
-                  <text>油耗</text>
+                <view class="col-3 flex">
+                  <image class="year-icon year-icon-03"
+                         src="../../assets/trip/statistics-03.png"></image>
+                  <view class="year-icon-text">
+                    <text>{{item.fuelConsumption || 0}}L</text>
+                    <text>油耗</text>
+                  </view>
                 </view>
               </view>
               <text class="foton-ui arr-icon right opacity2 just-right"></text>
@@ -179,6 +192,7 @@
   import wepy from 'wepy';
   import OperationSituation from '../../components/trip/operation-situation';
   import tripService from '../../services/trip';
+  import numToFixed from '../../lib/numToFixed';
 
   export default class TripIndex extends wepy.component {
 
@@ -221,51 +235,38 @@
           unit: '%',
         },
       ],
-      monthesIndex: 0,
-      monthes: [
-        // {
-        //   year: '2018',
-        //   date: [
-        //     {
-        //       calendar: '2018-01',
-        //       onLine: 22,
-        //       mileage: 22,
-        //       oil: 22
-        //     },
-        //     {
-        //       calendar: '2018-02',
-        //       onLine: 22,
-        //       mileage: 22,
-        //       oil: 22
-        //     },
-        //     {
-        //       calendar: '2018-03',
-        //       onLine: 22,
-        //       mileage: 22,
-        //       oil: 22
-        //     }
-        //   ]
-        // }
-      ],
+      monthes: [],
+      carId: '',
+      year: new Date().getFullYear(),
+      createdYear: 0,
+      currentYear: new Date().getFullYear(),
+      framenum: ''
     };
 
     methods = {
-      navigatorToMonth (year) {
-        // console.log(id);
-        wepy.navigateTo({
-          url: `./trip/trip-month?y=${year}`
-        });
+      navigatorToMonth (item) {
+        if (this.carId) {
+          wepy.navigateTo({
+            url: `./trip/trip-month?y=${item.dataTime}&carId=${this.carId}&runDays=${item.runDays}&mileage=${item.mileage}&fuelConsumption=${item.fuelConsumption}&workTimeInSeconds=${item.workTimeInSeconds}&avgVelocity=${item.avgVelocity}&workDays=${item.workDays}&framenum=${this.framenum}`
+          });
+        } else {
+          return false;
+        }
       },
       prevYear() {
-        if (this.monthesIndex > 0) {
-          this.monthesIndex--;
+        if (this.currentYear < this.year) {
+          this.currentYear++;
+          this.getData(this.carId, this.currentYear);
+          this.$apply();
         } else {
           return false;
         }
       },
       nextYear() {
-        if (this.monthesIndex < (this.monthes.length - 1)) {
-          this.monthesIndex++;
+        if (this.currentYear <= this.year && this.currentYear > this.createdYear) {
+          this.currentYear--;
+          this.getData(this.carId, this.currentYear);
+          this.$apply();
         } else {
           return false;
         }
@@ -276,29 +277,57 @@
     };
 
     events = {
-      'getTripIndex': async () => {
+      'getTripIndex': async (carId) => {
+        if (this.carId === carId) return;
+        this.carId = carId;
         wepy.showLoading({
           title: '加载中...'
         });
-        let {data, code} = await tripService.getTripIndex({
-          vin: '123'
+        let data = await tripService.getTripIndex({
+          carId
         });
+        this.operations[0].val = data.map.TT_MILEAGE || 0;
+        this.operations[1].val = data.map.TT_WORK_TIME || 0;
+        this.operations[2].val = data.map.TT_WORK_DAYS || 0;
+        this.operations[4].val = data.map.TT_AVG_VELOCITY || 0;
+        this.operations[5].val = data.map.TT_WORK_PERCENT || 0;
+        this.getData(this.carId, this.year);
+        this.getCreated(this.carId);
         wepy.hideLoading();
-        if (code === 1) {
-          this.monthes = data.statistics.map(ele => {
-            return {
-              date: ele.date.reverse(),
-              year: ele.year
-            };
+        this.$apply();
+      }
+    };
+
+    async getCreated(carId) {
+      let data = await tripService.getTripIndexCreated({
+        carId
+      });
+      if (data.code === 200 && data.data.created) {
+        this.framenum = data.data.framenum;
+        this.createdYear = new Date(data.data.created).getFullYear();
+        this.operations[3].val = parseInt(Math.abs(new Date(data.data.created) - new Date()) / 1000 / 60 / 60 / 24);
+        this.$apply();
+      }
+    };
+
+    async getData(carId, year) {
+      let data = await tripService.getTripIndexList({
+        carId,
+        year
+      });
+      if (data.code === 200) {
+        this.monthes = data.monthlyList.reverse().map(ele => {
+          let date = ele.dataTime.split(' ')[0];
+          return Object.assign(ele, {
+            mileage: numToFixed(ele.mileage / 1000),
+            dataTime: date,
+            workTimeInSeconds: numToFixed(ele.workTimeInSeconds / 60 / 60), // 转小时
+            avgVelocity: numToFixed(ele.avgVelocity),
+            year: date.split('-')[0],
+            month: date.split('-')[1]
           });
-          this.operations[0].val = data.operations.mileage;
-          this.operations[1].val = data.operations.time;
-          this.operations[2].val = data.operations.dirveDay;
-          this.operations[3].val = data.operations.runDay;
-          this.operations[4].val = data.operations.avgSpeed;
-          this.operations[5].val = data.operations.loss;
-          this.$apply();
-        }
+        });
+        this.$apply();
       }
     };
 

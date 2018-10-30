@@ -5,7 +5,8 @@ export function getPieOpt() {
       textStyle: {
         fontSize: 14,
         color: '#333',
-        align: 'center'
+        align: 'center',
+        fontWeight: 'bloder'
       },
       top: '8%',
       left: 'center'
@@ -17,13 +18,13 @@ export function getPieOpt() {
       trigger: 'item',
       formatter: "{b}: {c}"
     },
-    color: ['#4F91FF', '#FFBC52', '#3DE3A3', '#CBCBCB'],
+    color: ['#4F91FF', '#FFBC52', '#3DE3A3', '#22BFFF', '#21CC6D'],
     series: [
       {
         type: 'pie',
         radius: ['40%', '45%'],
         center: ['50%', '60%'],
-        avoidLabelOverlap: false,
+        avoidLabelOverlap: true,
         label: {
           normal: {
             show: true,
@@ -33,12 +34,12 @@ export function getPieOpt() {
               num: {
                 fontSize: 12,
                 color: '#333',
-                lineHeight: 40,
+                lineHeight: 20,
                 align: 'center'
               },
               time: {
                 fontSize: 10,
-                lineHeight: 40,
+                lineHeight: 20,
                 color: '#999',
                 align: 'center'
               }
@@ -56,8 +57,8 @@ export function getPieOpt() {
           normal: {
             show: true,
             smooth: false,
-            length: 35,					// 第一条导视线长度
-            length2: 35,				// 第二条导视线长度
+            length: 15,					// 第一条导视线长度
+            length2: 45,				// 第二条导视线长度
             lineStyle: {
               color: '#999',
               width: 0.5
@@ -79,7 +80,8 @@ export function getXyOpt() {
       textStyle: {
         fontSize: 14,
         color: '#333',
-        align: 'center'
+        align: 'center',
+        fontWeight: 'bloder'
       },
       top: '8%',
       left: 'center'
@@ -103,11 +105,12 @@ export function getXyOpt() {
       },
       axisLine: {
         lineStyle: {
-          color: '#ccc'
+          color: '#eee'
         }
       },
+
       axisLabel: {
-        color: '#666',
+        color: '#333',
         fontSize: 12
       },
       data: []
@@ -117,10 +120,18 @@ export function getXyOpt() {
       min: 0,
       max: 100,
       name: '占比(%)',
+      nameTextStyle: {
+        color: '#999'
+      },
       axisLabel: {
-        color: '#666',
+        color: '#999',
         fontSize: 12,
         interval: 'auto'
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#eee'
+        }
       },
       axisTick: {
         show: false
@@ -156,6 +167,7 @@ export function getScoreOpt() {
       {
         name: '综合得分',
         type: 'pie',
+        center: ['40%', '50%'],
         radius: ['65%', '75%'],
         labelLine: {
           show: false
@@ -215,7 +227,7 @@ export function getMapOpt() {
     series: [{
       type: 'map',
       map: 'china',
-      zoom: 1,
+      zoom: 1.2,
       itemStyle: {
         normal: {
           areaColor: '#DAE4FF',

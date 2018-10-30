@@ -8,7 +8,7 @@
 .car-info {
   margin-top: 20rpx;
   .scorechart {
-    width: 336rpx;
+    width: 316rpx;
     height: 380rpx;
   }
   .stars {
@@ -46,14 +46,19 @@
   .mapchart {
     width: 100%;
     height: 480rpx;
+    overflow: hidden;
   }
   .cities {
-    flex-wrap: wrap;
-    justify-content: space-around;
+    width: 100%;
     & > .city {
       width: 33%;
-      justify-content: flex-start;
+      margin-bottom: 10rpx;
+      float: left;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
       .num {
+        display: inline-block;
         width: 56rpx;
         height: 34rpx;
         line-height: 34rpx;
@@ -87,6 +92,8 @@
     height: 600rpx;
     border-radius: 20rpx;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
     .stop-point-chart {
       width: 100%;
       height: 100%;
@@ -94,7 +101,6 @@
   }
 }
 .driving-env {
-  padding: 0 0 20rpx 0;
   .h3 {
     margin: 40rpx 0 20rpx 40rpx;
     font-size: 28rpx;
@@ -107,6 +113,9 @@
     margin-bottom: 20rpx;
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.07);
     overflow: hidden;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 </style>
@@ -138,19 +147,19 @@
       <text>车辆足迹</text>
     </view>
     <view class="part-main">
-      <view class="title">车辆经过<text>{{beenPlace.province}}</text>个省份、<text>{{beenPlace.cities}}</text>个城市</view>
-      <view class="title">超过<text>{{beenPlace.raty}}</text>的车辆</view>
+      <view class="title">车辆经过<text>{{beenPlace.provinceCount}}</text>个省份、<text>{{beenPlace.cityCount}}</text>个城市</view>
+      <view class="title">超过<text>{{beenPlace.raty + '%'}}</text>的车辆</view>
       <view class="mapchart">
         <map-chart class="chart" key="mapchart" :ec="ec"></map-chart>
       </view>
-      <view class="cities flex">
+      <view class="cities clearfix">
         <repeat for="{{citiesOrder}}" key="index" index="index" item="item">
-          <view class="city flex">
-            <view class="num {{index < 3 ? 'firstline' : ''}}">
+          <view class="city">
+            <text class="num {{index < 3 ? 'firstline' : ''}}">
               <text wx:if="{{index < 9}}">0</text>
               <text>{{(index + 1) + '.'}}</text>
-            </view>
-            <view class="name">{{item}}</view>
+            </text>
+            <text class="name">{{item.city}}</text>
           </view>
         </repeat>
       </view>
@@ -188,10 +197,10 @@ import ecCanvas from '../plugins/ec-canvas/ec-canvas';
 import * as echarts from '../plugins/ec-canvas/echarts';
 import { geoJson } from '../plugins/ec-canvas/china';
 import { getPieOpt, getXyOpt, getScoreOpt, getMapOpt } from './options';
-import Toast from '../lib/toast';
 
 export default class Protrait extends wepy.component {
   data = {
+    carId: '',
     ec: {
       lazyLoad: true
     },
@@ -206,7 +215,11 @@ export default class Protrait extends wepy.component {
       onImg: '../assets/portrait/on-star.png',
       offImg: '../assets/portrait/off-star.png'
     },
-    beenPlace: {},
+    beenPlace: {
+      provinceCount: 0,
+      cityCount: 0,
+      raty: 0
+    },
     citiesOrder: [],
     stopMarkers: [],
     dayNight: [],
@@ -235,110 +248,206 @@ export default class Protrait extends wepy.component {
 
   xyOptColors = ['#FFBC52', '#4F91FF'];
 
-  events = {
-    'portraitRender': async (vin) => {
-      wx.showLoading({title: '加载中'});
-      this.initOpts();
-      this.bindChart();
-      let res = await CarService.getPortraitInfo({vin});
-      wx.hideLoading();
-      if (!res.footprint) {
-        Toast.info('网络错误');
-        return;
-      }
-      Toast.success('');
-      let footprint = res.footprint;  // 地图数据
-      this.score = res.score;   // 综合得分
-      this.stars = res.stars;   // 星星
-      this.beenPlace = res.beenPlace;   // 经过的省份、城市、比例
-      this.citiesOrder = res.citiesOrder;   // 经过的城市
-      // 经常停车点
-      let stopPoints = res.stopPoints.map((v, i) => {
-        return {
-          iconPath: '../assets/portrait/stop.png',
-          id: i,
-          latitude: v.latitude,
-          longitude: v.longitude,
-          width: 12,
-          height: 16
-        };
+  async getPortraitScore () {
+    let r1 = await CarService.getPortraitScore({carId: this.carId});
+    this.score = r1.score;   // 综合得分
+    this.stars = r1.stars;   // 星星
+    // scorechart
+    let activeColor = this.score > 59 ? '#10D988' : '#F3C414';
+    this.scoreOpt.color = [activeColor, '#eee'];
+    this.scoreOpt.series[0].data = [
+      { name: '得分', value: this.score },
+      { name: '', value: (100 - this.score) }
+    ];
+    this.$apply();
+    this.$broadcast('render', 'scorechart', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
       });
-      this.stopMarkers = stopPoints;
-      // 行车环境
-      this.dayNight = res.dayNight;
-      this.weather = res.weather;
-      this.humidity = res.humidity;
-      this.temperature = res.temperature;
-      this.altitude = res.altitude;
+      canvas.setChart(chart);
+      chart.setOption(this.scoreOpt);
+      return chart;
+    });
+  }
+  async getPortraitProvinceOrder () {
+    let r2 = await CarService.getPortraitProvinceOrder({carId: this.carId});
+    this.beenPlace.provinceCount = r2.provinceCount;   // 经过的省份
+    let footprint = r2.list;  // 地图数据(省份)
+    // mapchart
+    {
+      let seriesData = this.convertProvinceName(this.convertArrJsonName(this.convertArrJsonName(footprint, 'provincecount', 'value')));
+      seriesData.sort((a, b) => b.value - a.value);
+      let markPointData = seriesData.slice(0, 3);
+      markPointData = markPointData.map(v => {
+        v.coord = geoJson.features.find(x => x.properties.name === v.name).properties.cp;
+        return v;
+      });
+      this.mapchartOpt.visualMap.max = seriesData[0].value;
+      this.mapchartOpt.series[0].data = seriesData;
+      this.mapchartOpt.series[0].markPoint.data = markPointData;
+    }
+    this.$apply();
+    this.$broadcast('render', 'mapchart', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      });
+      canvas.setChart(chart);
+      chart.setOption(this.mapchartOpt);
+      return chart;
+    });
+  }
+  async getPortraitCityOrder () {
+    let r3 = await CarService.getPortraitCityOrder({carId: this.carId});
+    this.beenPlace.cityCount = r3.cityCount;
+    this.citiesOrder = r3.list.sort((a, b) => b.count - a.count).slice(0, 12);   // 经过的城市
+    this.$apply();
+  }
+  async getCitiesProportion () {
+    let r4 = await CarService.getCitiesProportion({carId: this.carId});
+    this.beenPlace.raty = r4.map.citiesProportion.toFixed(2);
+    this.$apply();
+  }
+  async getPortraitStopPoints () {
+    let r5 = await CarService.getPortraitStopPoints({carId: this.carId});
+    // 经常停车点
+    if (!r5.list) return;
+    this.stopMarkers = r5.list.map((v, i) => {
+      return {
+        iconPath: '../assets/portrait/stop.png',
+        id: i,
+        latitude: v.latitude,
+        longitude: v.longitude,
+        width: 12,
+        height: 16
+      };
+    });
+    this.$apply();
+  }
+  async getPortraitDayNight () {
+    let r = await CarService.getPortraitDayNight({carId: this.carId});
+    this.daynightOpt.title.text = '昼夜分布情况';
+    this.daynightOpt.series[0].data = r.data;
+    this.$apply();
+    this.$broadcast('render', 'daynight', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      });
+      canvas.setChart(chart);
+      chart.setOption(this.daynightOpt);
+      return chart;
+    });
+  }
+  async getPortraitWeather () {
+    let r = await CarService.getPortraitWeather({carId: this.carId});
+    this.weatherOpt.title.text = '天气分布情况';
+    this.weatherOpt.series[0].data = r.data;
+    this.$apply();
+    this.$broadcast('render', 'weather', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      });
+      canvas.setChart(chart);
+      chart.setOption(this.weatherOpt);
+      return chart;
+    });
+  }
+  async getPortraitHumidity () {
+    let r = await CarService.getPortraitHumidity({carId: this.carId});
+    this.humidityOpt.title.text = '湿度分布情况';
+    this.humidityOpt.series[0].data = r.data;
+    this.$apply();
+    this.$broadcast('render', 'humidity', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      });
+      canvas.setChart(chart);
+      chart.setOption(this.humidityOpt);
+      return chart;
+    });
+  }
+  async getPortraitTemperature () {
+    let r = await CarService.getPortraitTemperature({carId: this.carId});
 
-      // options数据
-      // scorechart
-      {
-        let activeColor = this.score > 59 ? '#10D988' : '#F3C414';
-        this.scoreOpt.color = [activeColor, '#eee'];
-        this.scoreOpt.series[0].data = [
-          { name: '得分', value: this.score },
-          { name: '', value: (100 - this.score) }
-        ];
-      }
-      // mapchart
-      {
-        let seriesData = this.convertProvinceName(this.convertArrJsonName(footprint));
-        seriesData.sort((a, b) => b.value - a.value);
-        let markPointData = seriesData.slice(0, 3);
-        let maxValue = seriesData[0].value;
-        markPointData = markPointData.map(v => {
-          v.coord = geoJson.features.find(x => x.properties.name === v.name).properties.cp;
-          return v;
-        });
-        this.mapchartOpt.series[0].data = seriesData;
-        this.mapchartOpt.series[0].markPoint.data = markPointData;
-      }
-      // 饼图
-      {
-        this.daynightOpt.title.text = '昼夜分布情况';
-        this.daynightOpt.series[0].data = this.dayNight;
-        this.weatherOpt.title.text = '天气分布情况';
-        this.weatherOpt.series[0].data = this.weather;
-        this.humidityOpt.title.text = '湿度分布情况';
-        this.humidityOpt.series[0].data = this.humidity;
+    let xAxisData = ['极寒', '寒冷', '凉爽', '温暖', '炎热'];
+    this.temperatureOpt.title.text = '温度分布情况';
+    this.temperatureOpt.xAxis.data = xAxisData;
+    let seriesData = [];
+    r.data.forEach(v => {
+      let ind = xAxisData.indexOf(v.name);
+      seriesData[ind] = {
+        value: v.value,
+        itemStyle: {
+          color: this.xyOptColors[ind % 2]
+        }
+      };
+    });
+    this.temperatureOpt.series[0].data = seriesData;
+    this.$apply();
+    this.$broadcast('render', 'temperature', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      });
+      canvas.setChart(chart);
+      chart.setOption(this.temperatureOpt);
+      return chart;
+    });
+  }
+  async getPortraitAltitude () {
+    let r = await CarService.getPortraitAltitude({carId: this.carId});
+    let xAxisData = ['平原', '丘陵', '山地', '高原'];
+    this.altitudeOpt.title.text = '海拔分布情况';
+    this.altitudeOpt.xAxis.data = xAxisData;
+    let seriesData = [];
+    r.data.forEach(v => {
+      let ind = xAxisData.indexOf(v.name);
+      seriesData[ind] = {
+        value: v.value,
+        itemStyle: {
+          color: this.xyOptColors[ind % 2]
+        }
+      };
+    });
+    this.altitudeOpt.series[0].data = seriesData;
+    this.$apply();
+    this.$broadcast('render', 'altitude', (canvas, width, height) => {
+      const chart = echarts.init(canvas, null, {
+        width: width,
+        height: height
+      });
+      canvas.setChart(chart);
+      chart.setOption(this.altitudeOpt);
+      return chart;
+    });
+  }
 
-      }
-      // xy图
-      {
-        let xAxisData = ['极寒', '寒冷', '凉爽', '温暖', '炎热']
-        this.temperatureOpt.title.text = '温度分布情况';
-        this.temperatureOpt.xAxis.data = xAxisData;
-        let seriesData = [];
-        this.temperature.forEach(v => {
-          let ind = xAxisData.indexOf(v.name);
-          seriesData[ind] = {
-            value: v.value,
-            itemStyle: {
-              color: this.xyOptColors[ind % 2]
-            }
-          };
-        });
-        this.temperatureOpt.series[0].data = seriesData;
-      }
-      {
-        let xAxisData = ['平原', '丘陵', '山地', '高原']
-        this.altitudeOpt.title.text = '海拔分布情况';
-        this.altitudeOpt.xAxis.data = xAxisData;
-        let seriesData = [];
-        this.altitude.forEach(v => {
-          let ind = xAxisData.indexOf(v.name);
-          seriesData[ind] = {
-            value: v.value,
-            itemStyle: {
-              color: this.xyOptColors[ind % 2]
-            }
-          };
-        });
-        this.altitudeOpt.series[0].data = seriesData;
-      }
+  events = {
+    'portraitRender': async (carId) => {
+      if (this.carId === carId) return;
+      this.carId = carId;
       this.$apply();
-      this.bindChart();
+      this.$broadcast('destroy-echarts');
+      this.initOpts();
+      this.getPortraitScore();
+      this.getPortraitProvinceOrder();
+      this.getPortraitCityOrder();
+      this.getCitiesProportion();
+      this.getPortraitStopPoints();
+      this.getPortraitDayNight();
+      this.getPortraitWeather();
+      this.getPortraitHumidity();
+      this.getPortraitTemperature();
+      this.getPortraitAltitude();
+    },
+    'resetCarIdDid': () => {
+      this.carId = '';
+      this.did = '';
+      this.$apply();
     }
   }
 
@@ -353,74 +462,6 @@ export default class Protrait extends wepy.component {
   }
   onLoad () {
   }
-
-  bindChart() {
-    this.$broadcast('destroy-echarts');
-    this.$broadcast('render', 'scorechart', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.scoreOpt);
-      return chart;
-    });
-    this.$broadcast('render', 'mapchart', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.mapchartOpt);
-      return chart;
-    });
-    this.$broadcast('render', 'daynight', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.daynightOpt);
-      return chart;
-    });
-    this.$broadcast('render', 'weather', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.weatherOpt);
-      return chart;
-    });
-    this.$broadcast('render', 'humidity', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.humidityOpt);
-      return chart;
-    });
-    this.$broadcast('render', 'temperature', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.temperatureOpt);
-      return chart;
-    });
-    this.$broadcast('render', 'altitude', (canvas, width, height) => {
-      const chart = echarts.init(canvas, null, {
-        width: width,
-        height: height
-      });
-      canvas.setChart(chart);
-      chart.setOption(this.altitudeOpt);
-      return chart;
-    });
-  }
-
   initOpts () {
     this.scoreOpt = getScoreOpt();
     this.mapchartOpt = getMapOpt();

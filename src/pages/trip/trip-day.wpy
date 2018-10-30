@@ -175,24 +175,25 @@
           <view class="map-echart-info">
             <view class="map-echart-info-item">
               <text>行驶里程：</text>
-              <text>13.21km</text>
+              <text>{{operations[0].val}}km</text>
             </view>
             <view class="map-echart-info-item">
               <text>行驶时长：</text>
-              <text>00:34:33</text>
+              <text>{{operations[1].val}}</text>
             </view>
             <view class="map-echart-info-item">
               <text>平均速度：</text>
-              <text>13.21km/h</text>
+              <text>{{avgVelocity}}km/h</text>
             </view>
             <view class="map-echart-info-item">
               <text>最大速度：</text>
-              <text>13.21km/h</text>
+              <text>{{maxVelocity}}km/h</text>
             </view>
           </view>
         </view>
       </view>
     </view>
+    <noMore></noMore>
   </view>
 </template>
 
@@ -202,6 +203,8 @@
   import ecCanvas from '../../plugins/ec-canvas/ec-canvas';
   import * as echarts from '../../plugins/ec-canvas/echarts';
   import tripService from '../../services/trip';
+  import secToTime from '../../lib/secToTime';
+  import NoMore from '../../components/no-more';
 
   const MAP_LINE_TITLE_COLOR = [
     '#FF7D2A',
@@ -213,6 +216,8 @@
   export default class TripDay extends wepy.page {
     data = {
       mapTitleColor: MAP_LINE_TITLE_COLOR,
+      maxVelocity: 0,
+      avgVelocity: 0,
       ec: {
         lazyLoad: true,
       },
@@ -269,78 +274,87 @@
         },
       ],
       markers: [
-        {
-          iconPath: '../../assets/trip/icon-start.png',
-          id: 0,
-          latitude: 23.10229,
-          longitude: 113.3245211,
-          width: 21,
-          height: 27,
-          zIndex: 2,
-        },
-        {
-          iconPath: '../../assets/trip/tran.png',
-          fill: '#ff0000',
-          id: 1,
-          longitude: 113.335520,
-          latitude: 23.21229,
-          zIndex: 2,
-          label: {
-            content: '超',
-            color: '#ffffff',
-            padding: 5,
-            anchorY: -17,
-            anchorX: -7,
-            borderRadius: 5,
-            zIndex: 3,
-            fontSize: 10,
-            bgColor: '#ff0000',
-          },
-        },
-        {
-          iconPath: '../../assets/trip/icon-end.png',
-          id: 2,
-          latitude: 23.21229,
-          longitude: 113.324520,
-          width: 21,
-          height: 27,
-          zIndex: 2,
-        },
+        // {
+        //   iconPath: '../../assets/trip/icon-start.png',
+        //   id: 0,
+        //   latitude: 23.10229,
+        //   longitude: 113.3245211,
+        //   width: 21,
+        //   height: 27,
+        //   zIndex: 2,
+        // },
+        // {
+        //   iconPath: '../../assets/trip/tran.png',
+        //   fill: '#ff0000',
+        //   id: 1,
+        //   longitude: 113.335520,
+        //   latitude: 23.21229,
+        //   zIndex: 2,
+        //   label: {
+        //     content: '超',
+        //     color: '#ffffff',
+        //     padding: 3,
+        //     anchorY: -17,
+        //     anchorX: -7,
+        //     borderRadius: 5,
+        //     zIndex: 3,
+        //     fontSize: 10,
+        //     bgColor: '#ff0000',
+        //   },
+        // },
+        // {
+        //   iconPath: '../../assets/trip/icon-end.png',
+        //   id: 2,
+        //   latitude: 23.21229,
+        //   longitude: 113.324520,
+        //   width: 21,
+        //   height: 27,
+        //   zIndex: 2,
+        // },
       ],
       includePoints: [
-        {
-          longitude: 113.3245211,
-          latitude: 23.10229,
-        },
-        {
-          longitude: 113.335520,
-          latitude: 23.21229,
-        },
-        {
-          longitude: 113.324520,
-          latitude: 23.21229,
-        },
+        // 起点坐标
+        // 终点坐标
+        // {
+        //   longitude: 113.3245211,
+        //   latitude: 23.10229,
+        // },
+        // {
+        //   longitude: 113.324520,
+        //   latitude: 23.21229,
+        // },
       ],
       polyline: [
-        {
-          points: [
-            {
-              longitude: 113.3245211,
-              latitude: 23.10229,
-            },
-            {
-              longitude: 113.335520,
-              latitude: 23.21229,
-            },
-            {
-              longitude: 113.324520,
-              latitude: 23.21229,
-            },
-          ],
-          color: '#FF0000',
-          width: 2,
-          dottedLine: false,
-        },
+        // {
+        //   points: [
+        //     {
+        //       longitude: 113.335520,
+        //       latitude: 23.21229,
+        //     },
+        //     {
+        //       longitude: 113.324520,
+        //       latitude: 23.21229,
+        //     },
+        //   ],
+        //   color: '#ffff00',
+        //   width: 2,
+        //   dottedLine: false,
+        // },
+        // {
+        //   points: [
+        //     {
+        //       longitude: 113.3245211,
+        //       latitude: 23.10229,
+        //     },
+        //     {
+        //       longitude: 113.335520,
+        //       latitude: 23.21229,
+        //     }
+        //   ],
+        //   color: '#FF0000',
+        //   width: 2,
+        //   dottedLine: false,
+        // },
       ],
       operations: [
         {
@@ -415,6 +429,8 @@
           },
         ],
       },
+      carId: '',
+      framenum: ''
     };
 
     computed = {
@@ -426,12 +442,13 @@
     components = {
       operationSituation: OperationSituation,
       radarEcharts: ecCanvas,
+      noMore: NoMore
     };
 
     methods = {
       navigatorToDayTime() {
         wepy.navigateTo({
-          url: `./trip-day-time?y=${this.year}-${this.month}-${this.day}`
+          url: `./trip-day-time?y=${this.year}-${this.month}-${this.day}&carId=${this.carId}`
         });
       },
       mapRadar(canvas, width, height, callback) {
@@ -460,19 +477,63 @@
       wepy.setNavigationBarTitle({
         title: `${this.year}年${this.month}月${this.day}日行程`,
       });
-      this.getData();
+      this.framenum = option.framenum;
+      this.operations[0].val = option.mileage || 0;
+      this.operations[1].val = secToTime(option.workTimeInSeconds) || 0;
+      this.operations[2].val = secToTime(option.workTimeInSeconds) || 0;
+      this.operations[3].val = option.fuelConsumption || 0;
+      this.avgVelocity = option.avgVelocity || 0;
+      this.maxVelocity = option.maxVelocity || 0;
+      this.carId = option.carId;
+      this.getData(this.framenum);
+      this.$apply();
     };
 
-    async getData () {
-      let {data, code} = await tripService.getTripDay({
-        vin: '132132',
-        date: `${this.year}-${this.month}-${this.day}`
+    async getData (framenum) {
+      let data = await tripService.getTripDayMap({
+        framenum,
+        startTime: `${this.year}-${this.month}-${this.day} 00:00:00`,
+        endTime: `${this.year}-${this.month}-${this.day} 23:59:59`,
       });
-      if (code === 1) {
-        this.operations[0].val = data.operations.mileage;
-        this.operations[1].val = data.operations.time;
-        this.operations[2].val = data.operations.runDay;
-        this.operations[3].val = data.operations.loss;
+      if (data.code === 200) {
+        let list = data.list.map(ele => {
+          return {
+            dataTime: ele.dataTime,
+            latitude: ele.latitude,
+            longitude: ele.longitude
+          };
+        });
+        wx.setStorageSync('map', JSON.stringify(list));
+        let len = list.length;
+        this.includePoints = list;
+        // this.polyline.points = data.list;
+        this.polyline = [{
+          points: list,
+          color: '#FF0000',
+          width: 2,
+          dottedLine: false,
+        }];
+        let iconPath = '';
+        let iconPath1 = '../../assets/trip/icon-start.png';
+        let iconPath2 = '../../assets/trip/icon-end.png';
+        let iconPath3 = '../../assets/trip/tran.png';
+        list.map((ele, i) => {
+          if (i === 0) {
+            iconPath = iconPath1;
+          } else if (i === len - 1) {
+            iconPath = iconPath2;
+          } else {
+            iconPath = iconPath3;
+          }
+          return Object.assign(ele, {
+            id: i,
+            iconPath,
+            width: 21,
+            height: 27,
+            zIndex: 2,
+          });
+        });
+        this.markers = list;
         this.$apply();
       }
     };

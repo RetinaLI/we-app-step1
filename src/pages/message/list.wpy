@@ -56,9 +56,15 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
   import reportService from '../../services/report';
   import toast from '../../lib/toast';
 
+  @connect({
+    platform (state) {
+      return state.profile.platform;
+    }
+  })
   export default class MessageList extends wepy.page {
     config = {
       navigationBarTitleText: '报告',
@@ -89,17 +95,26 @@
     };
 
     onLoad () {
+      this.initData();
     }
 
     onHide() {
+    }
+
+    async initData() {
+      this.list = [];
+      this.$apply();
+      this.pageIndex = 0;
+      await this.bindData();
     }
 
     async bindData() {
       if (this.loadingData) return;
       this.loadingData = true;
       let result = await reportService.getList({ pageIndex: this.pageIndex, pageSize: this.pageSize });
-      if(this.pageIndex === 0) this.list = result.list;
-      else {
+      if (this.pageIndex === 0) {
+        this.list = result.list;
+      } else {
         let list = [...this.list, ...result.list];
         this.list = list;
       }
@@ -107,35 +122,29 @@
       this.loadingData = false;
     }
 
-    onShow() {
-      this.pageIndex = 0;
-      this.bindData();
+    async onShow() {
     }
 
     async onPullDownRefresh() {
       if (this.loadingData) return;
-      wepy.showLoading({
-        title: '刷新数据'
-      });
       this.pageIndex = 0;
       await this.bindData();
-      wepy.hideLoading();
       wepy.stopPullDownRefresh();
-      toast.success('刷新成功');
     }
 
     async onReachBottom() {
       if (this.loadingData) return;
-      wepy.showLoading({
-        title: '加载数据'
-      });
       this.pageIndex ++;
       await this.bindData();
-      wepy.hideLoading();
-      toast.success('加载成功');
     }
 
     onUnLoad() {
+    }
+
+    watch = {
+      platform: () => {
+        this.initData();
+      }
     }
   }
 </script>
